@@ -12,6 +12,13 @@ import {
   StartCountdownButton,
   TaskInput,
 } from './styles'
+import { useState } from 'react'
+
+interface Cycle {
+  id: string
+  task: string
+  minutes: number
+}
 
 const newCycleFormValidationScheme = zod.object({
   task: zod.string().min(1, 'Please, informate the task'),
@@ -29,6 +36,8 @@ type NewCycleFormData = zod.infer<typeof newCycleFormValidationScheme>
 /* Schema is basically a format, and we are going to validate the form based on this schema, just like we dor with dbs */
 
 export function Home() {
+  const [cycles, setCycles] = useState<Cycle[]>([])
+
   const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationScheme),
     defaultValues: {
@@ -38,7 +47,13 @@ export function Home() {
   })
 
   function handleCreateNewCycle(data: NewCycleFormData) {
+    // const newCycle: Cycle = {
+    //   id: String(new Date().getTime()),
+    //   task: data.task,
+    // }
+
     console.log(data)
+
     reset() // The resets return to the default values setted on the useForm
   }
 
