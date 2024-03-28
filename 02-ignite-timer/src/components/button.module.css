@@ -1,0 +1,29 @@
+.button {
+  width: 100px;
+  height: 40px;
+}
+
+.primary {
+  background-color: purple;
+  color: white;
+}
+
+.secondary {
+  background-color: orange;
+  color: white;
+}
+
+.danger {
+  background-color: red;
+  color: white;
+}
+
+.success {
+  background-color: green;
+  color: white;
+}
+
+.neutral {
+  background-color: gray;
+  color: white;
+}
