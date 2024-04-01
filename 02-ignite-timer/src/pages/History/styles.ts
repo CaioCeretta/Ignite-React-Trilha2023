@@ -79,7 +79,12 @@ interface StatusProps {
   statusColor: keyof typeof STATUS_COLORS
 }
 
-// And here i basically changed so the available status colors are the keys of the type of the STATUS_COLORS const
+/* And here i basically changed so the available status colors are the keys of the type of the STATUS_COLORS const
+
+and in this case, i can't just utilize the keyof, i need to use the keyof typeof, because typescript cannot read ts objects,
+only the typing of the ts object  
+
+*/
 
 export const Status = styled.span<StatusProps>`
   display: flex;
