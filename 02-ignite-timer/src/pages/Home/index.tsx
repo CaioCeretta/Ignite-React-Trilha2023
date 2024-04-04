@@ -8,36 +8,46 @@ import {
   StartCountdownButton,
   TaskInput,
 } from './styles'
-import { useState } from 'react'
 
-/* 
-  There are numerous manners of creating forms in react, the way that we used is the most traditional way, it is not wrong
-  but it has some problems, and we are going to work with forms in react we have two main ways
+import { useForm } from 'react-hook-form'
 
-  Controlled / Uncontrolled
-
-  Controlled is nothing more than maintaning in real time the state, the information that the user inserts in our application
-  into the state, inside one variable inside of our component so we can keep track of everything change made by the user
-
-  It brings us a lot of fluidability for us to show and to not show things in our interface based on the user input
-
-  But, as anything in this world, it can have its good sides and bad sides
-
-  The bad side is that in react, everytime we cause a state change, we also cause a re rendering in our component and
-  react will recalculate all the component content, which can be very costly for the performance
-
-  so other approach will be on the other home file
-
- */
-
-/* Controlled example */
+/* In this code we are going to use 'react-hook-form', which allows us to work with forms in controlled way but also on
+uncontrolled way, with it, we can have both performances and flexibility, fluidity, on our form fields */
 
 export default function Home() {
-  const [task, setTask] = useState('')
+  const { register, handleSubmit, watch } = useForm()
+
+  /**
+   * The function register,receives the input name, and returns us some methods that we utilize to work with inputs on
+   * javascript, it gives us back methods such as
+   *
+   * return {
+   *  onChange: () => void,
+   *  onBlur: () => void,
+   *   onFocus: () => void
+   *  //Other input functions
+   * }
+   *
+   * So we use the spread syntax when declaring the register, like {...register('inputname')}, so our each one of these
+   * register returned methods, into an attribute of our input
+   *
+   * so if we did     register('task'). and tried to autocomplete, we would see all the available methods
+   */
+
+  /* The watch function is for us to keep track of the registered fields, and know our values in real time */
+  const wTask = watch('task')
+
+  // Aux variable
+  const isSubmitDisabled = !wTask
+
+  function handleCreateNewCycle(data: any) {
+    // When we involved the handleSubmit with this function, now data will be the data of the inputs of our form
+    console.log(data)
+  }
 
   return (
     <HomeContainer>
-      <form action="">
+      <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
         <FormContainer>
           <label htmlFor="task">I will work on</label>
           <TaskInput
@@ -45,24 +55,7 @@ export default function Home() {
             id="task"
             list="task-suggestions"
             placeholder="Name your task"
-            onChange={(e) => setTask(e.target.value)}
-            /* One good practice is that we set the value as the state variable, because if the variable changes from an
-            origin, that is not the user typing, i also want to visually the input change to show the new value, what is
-            quite common to happen.
-            
-            When we submit a form, and i want to clear the fields, let's say that we have a function of resetForm(), i'll
-            go on each state variable and set it to an empty string, and we need our inputs to reflect that
-
-            These are the controlled components, keep track of any modification and save them on the state
-
-            Benefits:
-
-            Because we have the real time values, we able to easily have access of these values when submitting and can
-            easily show interface changes based on the inputs value
-
-            */
-
-            value={task}
+            {...register('task')}
           />
 
           <datalist id="task-suggestions">
@@ -79,6 +72,15 @@ export default function Home() {
             max="60"
             type="number"
             placeholder="00"
+            {...register('minutesAmount', { valueAsNumber: true })}
+            /*
+            As the second parameter of the register, we can pass a configuration object, the property that we'll use is the 
+            valueAsNumber, and if we pass it as true, when we submit our form, it will come as a number. if we didn't pass
+            that config parameter, it would come back as a string
+
+
+
+            */
           />
           <label>Minutes</label>
         </FormContainer>
@@ -91,7 +93,7 @@ export default function Home() {
           <span>0</span>
         </CountdownContainer>
 
-        <StartCountdownButton disabled={!task} type="submit">
+        <StartCountdownButton disabled={isSubmitDisabled} type="submit">
           <Play size="24" />
           Start
         </StartCountdownButton>
