@@ -14,14 +14,6 @@ import {
   StopCountdownButton,
 } from './styles'
 
-const NewCycleFormValidationSchema = zod.object({
-  owner: zod.string().optional(),
-  task: zod.string().min(1, 'Informe a tarefa'),
-  minutesAmount: zod.number().min(5).max(60),
-})
-
-type NewCycleFormData = zod.infer<typeof NewCycleFormValidationSchema>
-
 interface Cycle {
   id: string
   task: string
@@ -34,19 +26,9 @@ interface Cycle {
 export default function Home() {
   const [cycles, setCycles] = useState<Cycle[]>([])
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
-  const [secondsAmountPassed, setSecondsAmountPassed] = useState(0)
-
-  const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
-    resolver: zodResolver(NewCycleFormValidationSchema),
-    defaultValues: {
-      task: '',
-      minutesAmount: 0,
-    },
-  })
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
-  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
   const currentSeconds = activeCycle ? totalSeconds - secondsAmountPassed : 0
 
   const minutesAmount = Math.floor(currentSeconds / 60)
@@ -54,49 +36,6 @@ export default function Home() {
 
   const minutes = String(minutesAmount).padStart(2, '0')
   const seconds = String(secondsAmount).padStart(2, '0')
-
-  useEffect(() => {
-    let cycleInterval = 0
-
-    if (activeCycle) {
-      cycleInterval = setInterval(() => {
-        const secondsDifference = differenceInSeconds(
-          new Date(),
-          activeCycle.startDate,
-        )
-
-        if (secondsDifference >= totalSeconds) {
-          setCycles(
-            cycles.map((state) => {
-              if (state.id === activeCycleId) {
-                return { ...state, finishedDate: new Date() }
-              } else {
-                return state
-              }
-            }),
-          )
-
-          setSecondsAmountPassed(totalSeconds)
-
-          clearInterval(cycleInterval)
-        } else {
-          setSecondsAmountPassed(secondsDifference)
-        }
-      }, 1000)
-    }
-
-    /* The return function happens as the first thing of an useEffect, so if i one of the depencies change and i'm going to
-    execute that interval again, i want to do something to clean what i was doing on the last useEffect so it cannot keep
-    on running.
-    
-    So basically, when we set an interval, everytime that the dependency changes and the useEffect runs, we are creating
-    a new interval, so here is where we delete the intervals that we don't need anymore
-    
-    */
-    return () => {
-      clearInterval(cycleInterval)
-    }
-  }, [activeCycle, totalSeconds])
 
   useEffect(() => {
     if (activeCycle) {
@@ -141,7 +80,12 @@ export default function Home() {
     <HomeContainer>
       <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
         <NewCycleForm />
-        <Countdown />
+        <Countdown
+          activeCycle={activeCycle}
+          cycles={cycles}
+          activeCycleId={activeCycleId}
+          setCycles={setCycles}
+        />
         {activeCycle ? (
           <StopCountdownButton type="button" onClick={handleInterruptCycle}>
             <HandPalm size="24" />
