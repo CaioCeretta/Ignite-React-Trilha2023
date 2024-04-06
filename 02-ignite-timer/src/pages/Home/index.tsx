@@ -1,9 +1,11 @@
-import { Play } from 'phosphor-react'
+import { HandPalm, Play } from 'phosphor-react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { differenceInSeconds } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import * as zod from 'zod'
 
+import { useEffect, useState } from 'react'
 import {
   CountdownContainer,
   FormContainer,
@@ -11,51 +13,134 @@ import {
   MinutesAmountInput,
   Separator,
   StartCountdownButton,
+  StopCountdownButton,
   TaskInput,
 } from './styles'
 
 const NewCycleFormValidationSchema = zod.object({
   owner: zod.string().optional(),
   task: zod.string().min(1, 'Informe a tarefa'),
-  // atributo com erro de digitação
   minutesAmount: zod.number().min(5).max(60),
 })
 
-// Instructor prefers using interface when defining the validation object.
-// interface NewCycleFormData {
-// task: string
-// minutesAmount: number
-// }
-
-/* and prefers using type when creating a typing from another reference, from another variable, or something like that, as it is in this case
- */
-
-/* Here it is with zod.infer, we are saying that zod will automatically infer the type.
-One thing to remember is that we cannot use a JavaScript variable, which is the case of NewCycleFormValidationSchema,
- inside TypeScript, it can't understand it, we always need to convert the js variable into a type, something specific to
- TypeScript, for that it's commonly used 'typeof'
-
- Now if we add new properties to the 'NewCycleFormValidationSchema', it will be automatically added to the type created
- below
-*/
 type NewCycleFormData = zod.infer<typeof NewCycleFormValidationSchema>
 
+interface Cycle {
+  id: string
+  task: string
+  minutesAmount: number
+  startDate: Date
+  interruptedDate?: Date
+  finishedDate?: Date
+}
+
 export default function Home() {
+  const [cycles, setCycles] = useState<Cycle[]>([])
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+  const [secondsAmountPassed, setSecondsAmountPassed] = useState(0)
+
   const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
     resolver: zodResolver(NewCycleFormValidationSchema),
     defaultValues: {
-      task: 'piroro',
+      task: '',
       minutesAmount: 0,
     },
   })
 
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
+  const currentSeconds = activeCycle ? totalSeconds - secondsAmountPassed : 0
+
+  const minutesAmount = Math.floor(currentSeconds / 60)
+  const secondsAmount = currentSeconds % 60
+
+  const minutes = String(minutesAmount).padStart(2, '0')
+  const seconds = String(secondsAmount).padStart(2, '0')
+
+  useEffect(() => {
+    let cycleInterval = 0
+
+    if (activeCycle) {
+      cycleInterval = setInterval(() => {
+        const secondsDifference = differenceInSeconds(
+          new Date(),
+          activeCycle.startDate,
+        )
+
+        if (secondsDifference >= totalSeconds) {
+          setCycles(
+            cycles.map((state) => {
+              if (state.id === activeCycleId) {
+                return { ...state, finishedDate: new Date() }
+              } else {
+                return state
+              }
+            }),
+          )
+
+          setSecondsAmountPassed(totalSeconds)
+
+          clearInterval(cycleInterval)
+        } else {
+          setSecondsAmountPassed(secondsDifference)
+        }
+      }, 1000)
+    }
+
+    /* The return function happens as the first thing of an useEffect, so if i one of the depencies change and i'm going to
+    execute that interval again, i want to do something to clean what i was doing on the last useEffect so it cannot keep
+    on running.
+    
+    So basically, when we set an interval, everytime that the dependency changes and the useEffect runs, we are creating
+    a new interval, so here is where we delete the intervals that we don't need anymore
+    
+    */
+    return () => {
+      clearInterval(cycleInterval)
+    }
+  }, [activeCycle, totalSeconds])
+
+  useEffect(() => {
+    if (activeCycle) {
+      document.title = `${minutes}:${seconds}`
+    }
+  }, [minutes, seconds, activeCycle])
+
   function handleCreateNewCycle(data: NewCycleFormData) {
-    console.log(data)
+    const id = String(new Date().getTime())
+
+    const newCycle: Cycle = {
+      id,
+      task: data.task,
+      minutesAmount: data.minutesAmount,
+      startDate: new Date(),
+    }
+
+    setCycles((prev) => [...prev, newCycle])
+    setActiveCycleId(newCycle.id)
+
     reset()
+  }
+
+  function handleInterruptCycle() {
+    setCycles(
+      cycles.map((state) => {
+        if (state.id === activeCycleId) {
+          return { ...state, interruptedDate: new Date() }
+        } else {
+          return state
+        }
+      }),
+    )
+
+    setActiveCycleId(null)
   }
 
   const task = watch('task')
   const isSubmitDisabled = !task
+
+  console.log(cycles)
 
   return (
     <HomeContainer>
@@ -66,6 +151,7 @@ export default function Home() {
             type="text"
             id="task"
             list="task-suggestions"
+            disabled={!!activeCycle}
             placeholder="Name your task"
             {...register('task')}
           />
@@ -80,28 +166,34 @@ export default function Home() {
           <MinutesAmountInput
             type="number"
             id="minutesAmount"
+            disabled={!!activeCycle}
             step={5}
             min={5}
             max={60}
             {...register('minutesAmount', { valueAsNumber: true })}
-            /* This second parameter of the config object is very important, otherwise, zod can interpret it as a string
-            and it will crash our code */
           />
           <label>Minutes</label>
         </FormContainer>
 
         <CountdownContainer>
-          <span>0</span>
-          <span>0</span>
+          <span>{minutes[0]}</span>
+          <span>{minutes[1]}</span>
           <Separator>:</Separator>
-          <span>0</span>
-          <span>0</span>
+          <span>{seconds[0]}</span>
+          <span>{seconds[1]}</span>
         </CountdownContainer>
 
-        <StartCountdownButton disabled={isSubmitDisabled} type="submit">
-          <Play size="24" />
-          Start
-        </StartCountdownButton>
+        {activeCycle ? (
+          <StopCountdownButton type="button" onClick={handleInterruptCycle}>
+            <HandPalm size="24" />
+            Stop
+          </StopCountdownButton>
+        ) : (
+          <StartCountdownButton disabled={isSubmitDisabled} type="submit">
+            <Play size="24" />
+            Start
+          </StartCountdownButton>
+        )}
       </form>
     </HomeContainer>
   )
