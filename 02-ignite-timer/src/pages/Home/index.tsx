@@ -6,15 +6,12 @@ import { useForm } from 'react-hook-form'
 import * as zod from 'zod'
 
 import { useEffect, useState } from 'react'
+import { Countdown } from './components/Countdown'
+import { NewCycleForm } from './components/NewCycleForm'
 import {
-  CountdownContainer,
-  FormContainer,
   HomeContainer,
-  MinutesAmountInput,
-  Separator,
   StartCountdownButton,
   StopCountdownButton,
-  TaskInput,
 } from './styles'
 
 const NewCycleFormValidationSchema = zod.object({
@@ -140,49 +137,11 @@ export default function Home() {
   const task = watch('task')
   const isSubmitDisabled = !task
 
-  console.log(cycles)
-
   return (
     <HomeContainer>
       <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
-        <FormContainer>
-          <label htmlFor="task">I will work on</label>
-          <TaskInput
-            type="text"
-            id="task"
-            list="task-suggestions"
-            disabled={!!activeCycle}
-            placeholder="Name your task"
-            {...register('task')}
-          />
-
-          <datalist id="task-suggestions">
-            <option value="React"></option>
-            <option value="Angular"></option>
-            <option value="Node"></option>
-          </datalist>
-
-          <label htmlFor="minutesAmount">For</label>
-          <MinutesAmountInput
-            type="number"
-            id="minutesAmount"
-            disabled={!!activeCycle}
-            step={5}
-            min={5}
-            max={60}
-            {...register('minutesAmount', { valueAsNumber: true })}
-          />
-          <label>Minutes</label>
-        </FormContainer>
-
-        <CountdownContainer>
-          <span>{minutes[0]}</span>
-          <span>{minutes[1]}</span>
-          <Separator>:</Separator>
-          <span>{seconds[0]}</span>
-          <span>{seconds[1]}</span>
-        </CountdownContainer>
-
+        <NewCycleForm />
+        <Countdown />
         {activeCycle ? (
           <StopCountdownButton type="button" onClick={handleInterruptCycle}>
             <HandPalm size="24" />
