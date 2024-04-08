@@ -1,11 +1,7 @@
+import { createContext, useState } from 'react'
+
 import { HandPalm, Play } from 'phosphor-react'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { differenceInSeconds } from 'date-fns'
-import { useForm } from 'react-hook-form'
-import * as zod from 'zod'
-
-import { useEffect, useState } from 'react'
 import { Countdown } from './components/Countdown'
 import { NewCycleForm } from './components/NewCycleForm'
 import {
@@ -23,25 +19,55 @@ interface Cycle {
   finishedDate?: Date
 }
 
+interface CyclesContextType {
+  activeCycle: Cycle | undefined
+  activeCycleId: string | null
+  markCurrentCycleAsFinished: () => void
+}
+
+export const CyclesContext = createContext({} as CyclesContextType)
+/**
+ * If i just passsed the create context as {} and not informing its type, like the as the type we've just created, when we
+ * hover over the CyclesContext it would show that the variable is an empty context, and we don't want it.
+ *
+ * An empty context biggest problems is that when the on the context provider we pass on the return, we pass the value to the
+ * provider, ts wouldn't have the intelligence to know which values the context accepts. But if we say our context type
+ * on the creation, ts will know what we're talking about
+ */
+
 export default function Home() {
   const [cycles, setCycles] = useState<Cycle[]>([])
+  /**
+   * Instructor tip
+   * In his particular case, he doesn't like to send the whole setCycles (or any other state setting function) inside a
+   * context
+   * Because if we are going to send the setCycles function into the context we will have to add its typescript typing
+   * and its typing, if we hover up the setCycles is a React.Dispatch<React.SetStateAction<Cycle[]>>.
+   * which can very laborious.
+   * So instead of sending the whole setCycles function, the instructor will check what the state function is doing and then
+   *
+   * Which in the setCycles case, it is basically setting a cycle as finished, so he likes to create a new function, inside
+   * this component, and send only this function to the child, that will just call it and the parent will handle the
+   * cycle changes, no need to pass the state setter
+   *
+   *
+   */
+
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
-  const currentSeconds = activeCycle ? totalSeconds - secondsAmountPassed : 0
-
-  const minutesAmount = Math.floor(currentSeconds / 60)
-  const secondsAmount = currentSeconds % 60
-
-  const minutes = String(minutesAmount).padStart(2, '0')
-  const seconds = String(secondsAmount).padStart(2, '0')
-
-  useEffect(() => {
-    if (activeCycle) {
-      document.title = `${minutes}:${seconds}`
-    }
-  }, [minutes, seconds, activeCycle])
+  function markCurrentCycleAsFinished() {
+    setCycles(
+      cycles.map((state) => {
+        if (state.id === activeCycleId) {
+          return { ...state, finishedDate: new Date() }
+        } else {
+          return state
+        }
+      }),
+    )
+  }
 
   function handleCreateNewCycle(data: NewCycleFormData) {
     const id = String(new Date().getTime())
@@ -72,20 +98,17 @@ export default function Home() {
 
     setActiveCycleId(null)
   }
-
-  const task = watch('task')
-  const isSubmitDisabled = !task
+  // const isSubmitDisabled = !task
 
   return (
     <HomeContainer>
       <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
-        <NewCycleForm />
-        <Countdown
-          activeCycle={activeCycle}
-          cycles={cycles}
-          activeCycleId={activeCycleId}
-          setCycles={setCycles}
-        />
+        <CyclesContext.Provider
+          value={{ activeCycle, activeCycleId, markCurrentCycleAsFinished }}
+        >
+          <NewCycleForm />
+          <Countdown />
+        </CyclesContext.Provider>
         {activeCycle ? (
           <StopCountdownButton type="button" onClick={handleInterruptCycle}>
             <HandPalm size="24" />
