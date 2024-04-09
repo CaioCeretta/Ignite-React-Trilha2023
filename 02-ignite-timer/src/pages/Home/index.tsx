@@ -1,7 +1,10 @@
 import { createContext, useState } from 'react'
+import * as zod from 'zod'
 
 import { HandPalm, Play } from 'phosphor-react'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FormProvider, useForm } from 'react-hook-form'
 import { Countdown } from './components/Countdown'
 import { NewCycleForm } from './components/NewCycleForm'
 import {
@@ -22,8 +25,17 @@ interface Cycle {
 interface CyclesContextType {
   activeCycle: Cycle | undefined
   activeCycleId: string | null
+  secondsAmountPassed: number
   markCurrentCycleAsFinished: () => void
+  setSecondsPassed: (seconds: number) => void
 }
+
+const NewCycleFormValidationSchema = zod.object({
+  owner: zod.string().optional(),
+  task: zod.string().min(1, 'Informe a tarefa'),
+  minutesAmount: zod.number().min(5).max(60),
+})
+type NewCycleFormData = zod.infer<typeof NewCycleFormValidationSchema>
 
 export const CyclesContext = createContext({} as CyclesContextType)
 /**
@@ -37,6 +49,8 @@ export const CyclesContext = createContext({} as CyclesContextType)
 
 export default function Home() {
   const [cycles, setCycles] = useState<Cycle[]>([])
+  const [secondsAmountPassed, setSecondsAmountPassed] = useState(0)
+
   /**
    * Instructor tip
    * In his particular case, he doesn't like to send the whole setCycles (or any other state setting function) inside a
@@ -55,7 +69,21 @@ export default function Home() {
 
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
 
+  const newCycleForm = useForm<NewCycleFormData>({
+    resolver: zodResolver(NewCycleFormValidationSchema),
+    defaultValues: {
+      task: '',
+      minutesAmount: 0,
+    },
+  })
+
+  const { handleSubmit, watch, reset } = newCycleForm
+
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  function setSecondsPassed(seconds: number) {
+    setSecondsAmountPassed(seconds)
+  }
 
   function markCurrentCycleAsFinished() {
     setCycles(
@@ -98,15 +126,25 @@ export default function Home() {
 
     setActiveCycleId(null)
   }
-  // const isSubmitDisabled = !task
+
+  const task = watch('task')
+  const isSubmitDisabled = !task
 
   return (
     <HomeContainer>
       <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
         <CyclesContext.Provider
-          value={{ activeCycle, activeCycleId, markCurrentCycleAsFinished }}
+          value={{
+            activeCycle,
+            activeCycleId,
+            markCurrentCycleAsFinished,
+            secondsAmountPassed,
+            setSecondsPassed,
+          }}
         >
-          <NewCycleForm />
+          <FormProvider {...newCycleForm}>
+            <NewCycleForm />
+          </FormProvider>
           <Countdown />
         </CyclesContext.Provider>
         {activeCycle ? (
