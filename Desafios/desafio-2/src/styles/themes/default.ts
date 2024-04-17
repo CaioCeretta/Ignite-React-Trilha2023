@@ -1,0 +1,18 @@
+export const defaultTheme = {
+ 
+  'yellow-dark': '#C47F17',
+  'yellow-mediun': '#DBAC2C',
+  'yellow-light': '#F1E9C9',
+
+  'purple-dark': '#4B2995',
+  'purple-medium': '#8047f8',
+  'purple-light': '#EBE5F9',
+
+  'base-title': '#272221',
+  'base-subtitle': '#403937',
+  'base-text': '#574F4D',
+  'base-button': '#E6E5E5',
+  'base-input': '#EDEDED',
+  'base-card': '#F3F2F2',
+
+}
