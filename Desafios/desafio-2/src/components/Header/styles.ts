@@ -17,7 +17,7 @@ export const HeaderContainer = styled.header`
       justify-content: center;
       align-items: center;
 
-      color: {props => props.theme}
+      
       
     }
   }
