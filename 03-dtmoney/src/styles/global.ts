@@ -10,7 +10,7 @@ export const GlobalStyle = createGlobalStyle`
 
   :focus {
     outline: 0;
-    box-shadow: 0 0 0 0 ${props => props.theme['green-500']};
+    box-shadow: 0 0 0 2px ${props => props.theme['green-500']};
 
     /*
       this focus approach can provide us a visually distinct focus indication that aligns with our design while still
