@@ -1,6 +1,6 @@
 import { ThemeProvider } from "styled-components";
 
-import { TransactionsContext, TransactionsProvider } from "./contexts/TransactionsContext";
+import { TransactionsProvider } from "./contexts/TransactionsContext";
 import { Transaction } from "./pages/Transactions";
 import { GlobalStyle } from "./styles/global";
 import { defaultTheme } from "./styles/themes/default";

@@ -57,6 +57,16 @@ export const Content = styled(Dialog.Content)`
     margin-top: .5rem;
     cursor: pointer;
 
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled).hover {
+      background: ${props => props.theme["green-700"]};
+      transition: background-color 0.2s;
+    }
+
     &:hover {
       background: ${props => props.theme['green-700']};
       transition: background-color 0.2s
@@ -67,19 +77,6 @@ export const Content = styled(Dialog.Content)`
 
 `
 
-export const CloseButton = styled(Dialog.Close)`
-  position: absolute;
-  background: transparent;
-  border: 0;
-
-  top: 1.5rem;
-  right: 1.5rem;
-
-  line-height: 0;
-
-  cursor: pointer;
-  color: ${props => props.theme['gray-500']}
-`
 
 export const TransactionType = styled(RadioGroup.Root)`
   display: grid;
@@ -124,4 +121,19 @@ export const TransactionTypeButton = styled(RadioGroup.Item) <TransactionButtonP
       color: ${props => props.theme.white};
     }
   }
+
+`
+
+export const CloseButton = styled(Dialog.Close)`
+  position: absolute;
+  background: transparent;
+  border: 0;
+
+  top: 1.5rem;
+  right: 1.5rem;
+
+  line-height: 0;
+
+  cursor: pointer;
+  color: ${props => props.theme['gray-500']}
 `
