@@ -36,6 +36,7 @@ export const SearchFormContainer = styled.form`
 
     font-weight: bold;
     color: ${props => props.theme['green-300']};
+    cursor: pointer;
 
      &:disabled {
       opacity: 0.7;

@@ -15,8 +15,6 @@ const newTransactionsFormSchema = z.object({
 type NewTransactionFormInputs = z.infer<typeof newTransactionsFormSchema>
 
 
-
-
 export function NewTransactionModal() {
 
   const {
@@ -51,14 +49,22 @@ export function NewTransactionModal() {
         <Dialog.Title> New Transaction</Dialog.Title>
         <CloseButton><X size={24} /></CloseButton>
         <form onSubmit={handleSubmit(handleCreateNewTransaction)}>
-          <input type="text" {...register('description')} placeholder="Description" />
-          <input type="number" {...register('price', { valueAsNumber: true })} placeholder="Price" />
-          <input type="text" {...register('category')} placeholder="Category" />
+          <input type="text"
+            {...register('description')}
+            placeholder="Description" />
+
+          <input type="number"
+            {...register('price',
+              { valueAsNumber: true })} placeholder="Price" />
+
+          <input type="text"
+            {...register('category')}
+            placeholder="Category" />
 
           <Controller
             control={control}
             name="type"
-            render={({field}) => {
+            render={({ field }) => {
               return (
                 <TransactionType
                   onValueChange={field.onChange}

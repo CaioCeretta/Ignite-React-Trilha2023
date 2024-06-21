@@ -28,6 +28,8 @@ export const NewTransactionButton = styled.button`
 
   &:hover {
     background: ${(props) => props.theme['green-700']};
+    /* This transition inside the hover and not inside the component, will make the transition to happen only on mouse in
+    and not also on out */
     transition: background-color 0.2s;
   }
 `
