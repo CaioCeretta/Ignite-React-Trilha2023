@@ -11,34 +11,31 @@ export const TransactionsContainer = styled.main`
 export const TransactionsTable = styled.table`
   width: 100%;
   border-collapse: separate;
+  /*
+    When we use the border-collapse as separe, the table rows borders are not going to colide, it will 
+    also allow us to use border-spacing and create a gap between kthe rows
+  */ 
   border-spacing: 0 0.5rem ;
   margin-top: 1.5rem;
 
   td {
-    padding: 1.25rem 2rem;
+    padding: 1.5rem 2rem;
     background: ${props => props.theme['gray-700']};
-
+    
     &:first-child {
-      border-top-left-radius: 6px;
-      border-bottom-left-radius: 6px;
+      border-radius:  6px 0 0 6px
     }
 
     &:last-child {
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
+      border-radius:  0 6px 6px 0
     }
-    
   }
-
-
-  
-  
 `
 
 interface PriceHighlightProps {
-  variant: 'income' | 'outcome';
+  variant: 'income' | 'outcome'
 }
 
 export const PriceHighlight = styled.span<PriceHighlightProps>`
-  color: ${props => props.variant === 'income' ? props.theme['green-500'] : props.theme['red-500']  }
+  color: ${props => props.variant === 'income' ? props.theme["green-500"] : props.theme['red-500']} 
 `

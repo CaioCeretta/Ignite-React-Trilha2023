@@ -11,6 +11,10 @@ export function Header() {
         <img src={logoImg} alt="" />
 
         <Dialog.Root>
+          {/* We could both create that NewTransactionButton on the styles as a Dialog.Trigger or we could do it like this
+          with the Dialog.Trigger wrapping it, but with a asChild property, it will change the component, so now the component
+          will change and that Dialog.Trigger will not create a new button, but leverage the button that is already inside
+          the tag and make that button be the trigger of the modal */}
           <Dialog.Trigger asChild>
             <NewTransactionButton>Nova transação</NewTransactionButton>
           </Dialog.Trigger>
