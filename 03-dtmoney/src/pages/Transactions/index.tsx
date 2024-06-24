@@ -1,18 +1,28 @@
-import { useContext } from "react";
 
+import { useContext } from "react";
 import { Header } from "../../components/Header";
 import { Summary } from "../../components/Summary";
-import { TransactionsContext } from "../../contexts/TransactionsContext";
 import { SearchForm } from "./components/SearchForm";
 import { PriceHighlight, TransactionsContainer, TransactionsTable } from "./styles";
+import { TransactionsContext } from "../../contexts/TransactionsContext";
+import { priceFormatter } from "../../utils/formatter";
 
-
+export interface Transaction {
+  id: number;
+  description: string;
+  type: 'income' | 'outcome';
+  category: string;
+  price: number;
+  createdAt: string;
+}
 
 
 
 export function Transaction() {
+
   const { transactions } = useContext(TransactionsContext)
 
+  console.log(transactions)
 
 
   return (
@@ -25,27 +35,20 @@ export function Transaction() {
 
         <TransactionsTable>
           <tbody>
-            <tr>
-              <td>Website Development</td>
-              <td>
-                <PriceHighlight variant="income">
-                  US$ 12.000,00
-                </PriceHighlight>
-              </td>
-              <td>Sale</td>
-              <td>13/04/2024</td>
-            </tr>
-            <tr>
-              <td>Hamburguer</td>
-              <td>
-                <PriceHighlight variant="outcome">
-                  US$ 59,00
-                </PriceHighlight>
-              </td>
-              <td>Aliments</td>
-              <td>13/04/2024</td>
-            </tr>
+            {transactions.map(transaction => (
+              <tr key={transaction.id}>
+                <td>{transaction.description}</td>
+                <td>
+                  <PriceHighlight variant={transaction.type}>
+                    {transaction.type === 'outcome' && '- '}
+                    {priceFormatter.format(transaction.price)}
+                  </PriceHighlight>
+                </td>
+                <td>{transaction.type}</td>
+                <td>{transaction.createdAt}</td>
+              </tr>
 
+            ))}
 
           </tbody>
         </TransactionsTable>
