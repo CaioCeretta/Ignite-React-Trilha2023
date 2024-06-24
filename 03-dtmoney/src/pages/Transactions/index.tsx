@@ -28,8 +28,8 @@ export function Transaction() {
             <tr>
               <td>Website Development</td>
               <td>
-                <PriceHighlight variant="income">U
-                  S$ 12.000,00
+                <PriceHighlight variant="income">
+                  US$ 12.000,00
                 </PriceHighlight>
               </td>
               <td>Sale</td>
