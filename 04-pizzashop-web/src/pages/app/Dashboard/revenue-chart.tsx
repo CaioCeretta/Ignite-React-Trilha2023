@@ -3,11 +3,10 @@ import {
   Line,
   LineChart,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from 'recharts'
-import colors, { violet } from 'tailwindcss/colors'
+import colors from 'tailwindcss/colors'
 
 import {
   Card,
@@ -29,7 +28,7 @@ const data = [
   { date: '12/16', revenue: 300 },
 ]
 
-export function RevenueChart(props: RevenueChartProps) {
+export function RevenueChart() {
   return (
     <Card className="col-span-6">
       <CardHeader className="flex-row items-center justify-between pb-8">
@@ -61,6 +60,9 @@ export function RevenueChart(props: RevenueChartProps) {
                 })
               }
             />
+
+            <CartesianGrid vertical={false} className="stroke-muted" />
+
             <Line
               type="linear"
               strokeWidth={2}
