@@ -26,7 +26,7 @@ export interface StoreProfileDialogProps {}
 
 const storeProfileSchema = z.z.object({
   name: z.string().min(1),
-  description: z.string(),
+  description: z.string().nullable(),
 })
 
 type StoreProfileSchema = z.infer<typeof storeProfileSchema>
@@ -52,24 +52,71 @@ export function StoreProfileDialog() {
     },
   })
 
+  function updateManagedRestaurantCache({
+    name,
+    description,
+  }: StoreProfileSchema) {
+    const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
+      'managed-restaurant',
+    ])
+
+    if (cached) {
+      queryClient.setQueryData<GetManagedRestaurantResponse>(
+        ['managed-restaurant'],
+        {
+          ...cached,
+          name,
+          description,
+        },
+      )
+    }
+    // This function tries to update the cache, but it returns, in tbis case, the restaurant data before the update
+
+    return { cached }
+  }
+
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
     /* Changing the HTTP State via the on success, so we are able to update the cache of a request that has already been
-    made, from the success of a request made after it */
-    onSuccess(_, { name, description }) {
-      const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
-        'managed-restaurant',
-      ])
+    made, from the success of a request made after it, we could use the onSuccess if we want to apply the changes after the
+    successful update, but if we want to automatically change and rollback after it went wrong, we can use the onMutate */
+    // onSuccess(_, { name, description }) {
+    //   const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
+    //     'managed-restaurant',
+    //   ])
 
-      if (cached) {
-        queryClient.setQueryData<GetManagedRestaurantResponse>(
-          ['managed-restaurant'],
-          {
-            ...cached,
-            name,
-            description,
-          },
-        )
+    //   if (cached) {
+    //     queryClient.setQueryData<GetManagedRestaurantResponse>(
+    //       ['managed-restaurant'],
+    //       {
+    //         ...cached,
+    //         name,
+    //         description,
+    //       },
+    //     )
+    //   }
+    // },
+
+    /* This function triggers at the moment i click on the save button, not only when it succeeds */
+    onMutate({ name, description }) {
+      const { cached } = updateManagedRestaurantCache({ name, description })
+
+      return { previousCachedProfile: cached }
+    },
+    /*
+      onError parameters
+      1 err: Details about the error
+      2 variables: the variables that we used at the time of the requisition
+      3 context: Informations that we can share between the context of a query or of a mutation
+      let's say that on this mutation i return "{test: 'ciao'} then on the context of the onError
+      we could utilize the context.test, everything returned by it, we can use on the context
+
+      So, by returning inside the onMutate, the previousCached restaurant, in case of any errors on the update, we can
+      successfully rollback to the state before
+    */
+    onError(_, __, context) {
+      if (context?.previousCachedProfile) {
+        updateManagedRestaurantCache(context.previousCachedProfile)
       }
     },
   })
