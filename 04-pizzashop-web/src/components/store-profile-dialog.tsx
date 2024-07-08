@@ -104,7 +104,7 @@ export function StoreProfileDialog() {
       return { previousCachedProfile: cached }
     },
     /*
-      onError parameters
+      onError parameterspnpm
       1 err: Details about the error
       2 variables: the variables that we used at the time of the requisition
       3 context: Informations that we can share between the context of a query or of a mutation
