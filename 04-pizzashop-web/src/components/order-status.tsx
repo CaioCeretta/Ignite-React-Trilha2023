@@ -1,6 +1,6 @@
 type OrderStatus =
   | 'pending'
-  | 'cancelled'
+  | 'canceled'
   | 'processing'
   | 'delivering'
   | 'delivered'
@@ -24,7 +24,7 @@ const OrderStatusMap: Record<OrderStatus, string> = {
   processing: 'Processing',
   delivering: 'In Transport',
   delivered: 'Delivered',
-  cancelled: 'Cancelled',
+  canceled: 'Cancelled',
 }
 
 export function OrderStatus({ status }: OrderStatusProps) {
@@ -34,7 +34,7 @@ export function OrderStatus({ status }: OrderStatusProps) {
         <span className="h-2 w-2 rounded-full bg-slate-400" />
       )}
 
-      {status === 'cancelled' && (
+      {status === 'canceled' && (
         <span className="h-2 w-2 rounded-full bg-rose-500" />
       )}
 
