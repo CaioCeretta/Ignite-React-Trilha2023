@@ -45,6 +45,10 @@ export function Orders() {
   pageIndex will be 2
   */
 
+  const orderId = searchParams.get('orderId')
+  const customerName = searchParams.get('customerName')
+  const status = searchParams.get('status')
+
   const pageIndex = z.coerce
     .number()
     .transform((page) => page - 1)
@@ -53,8 +57,14 @@ export function Orders() {
   /* If we make a function call whenever a parameter changes, we need to include then on the query key, otherwise, the
   key will already exist on the cache and that query will not be executed again */
   const { data: results } = useQuery({
-    queryKey: ['orders', pageIndex],
-    queryFn: () => getOrders({ pageIndex }),
+    queryKey: ['orders', pageIndex, customerName, orderId, status],
+    queryFn: () =>
+      getOrders({
+        pageIndex,
+        customerName,
+        orderId,
+        status: status === 'all' ? null : status,
+      }),
   })
 
   function handlePaginate(pageIndex: number) {
