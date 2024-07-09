@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from 'date-fns'
 import { ArrowRight, Search, X } from 'lucide-react'
+import { useState } from 'react'
 
 import { OrderStatus } from '@/components/order-status'
 import { Button } from '@/components/ui/button'
@@ -19,11 +20,17 @@ export interface OrderTableRowProps {
 }
 
 export function OrderTableRow({ order }: OrderTableRowProps) {
+  const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false)
+
   return (
     <>
       <TableRow key={order.orderId}>
         <TableCell>
-          <Dialog>
+          {/* 
+          Now the open or closed of that dialog is being held by a state, it opens if the isDetailOpen is true, and it
+          only turns into true if the open button is clicked on
+           */}
+          <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
             <DialogTrigger asChild>
               <Button variant={'outline'} size={'xs'}>
                 <Search className="h-3 w-3" />
@@ -31,7 +38,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
               </Button>
             </DialogTrigger>
 
-            <OrderDetails />
+            <OrderDetails orderId={order.orderId} open={isDetailsOpen} />
           </Dialog>
         </TableCell>
         <TableCell className="font-mono text-xs font-medium">
