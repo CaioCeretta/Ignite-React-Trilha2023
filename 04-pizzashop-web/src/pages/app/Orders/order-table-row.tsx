@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
-import { ArrowRight, Search, Table, X } from 'lucide-react'
+import { ArrowRight, Search, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { approveOrder } from '@/api/approve-order'
