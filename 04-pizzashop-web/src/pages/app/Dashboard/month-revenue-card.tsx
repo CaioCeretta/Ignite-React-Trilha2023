@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { DollarSign } from 'lucide-react'
 
-import { getMonthRevenue } from '@/api/get-mont-revenue'
+import { getMonthRevenue } from '@/api/get-month-revenue'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export interface MonthRevenueCardProps {}
@@ -23,33 +23,29 @@ export function MonthRevenueCard() {
       <CardContent className="space-y-1">
         {monthRevenue && (
           <>
-            {monthRevenue.amount >= 0 ? (
-              <>
-                <span className="text-2xl font-bold tracking-tight">
-                  $ {monthRevenue.amount}
-                </span>
-                <p className="text-xs text-muted-foreground">
-                  An increase of{' '}
+            <span className="text-2xl font-bold tracking-tight">
+              {(monthRevenue.receipt / 100).toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+              })}
+            </span>
+            <p className="text-xs text-muted-foreground">
+              {monthRevenue.diffFromLastMonth >= 0 ? (
+                <>
                   <span className="text-emerald-500 dark:text-emerald-400">
-                    {monthRevenue.diffFromLastMonth}
+                    +{monthRevenue.diffFromLastMonth}%
                   </span>{' '}
-                  in relation to the previous month
-                </p>
-              </>
-            ) : (
-              <>
-                <span className="text-2xl font-bold tracking-tight">
-                  {monthRevenue.amount}
-                </span>
-                <p className="text-xs text-muted-foreground">
-                  A decrease of{' '}
+                  em relação ao mês passado
+                </>
+              ) : (
+                <>
                   <span className="text-rose-500 dark:text-rose-400">
-                    {monthRevenue.diffFromLastMonth}
+                    {monthRevenue.diffFromLastMonth}%
                   </span>{' '}
-                  in relation to the previous month
-                </p>
-              </>
-            )}
+                  em relação ao mês passado
+                </>
+              )}
+            </p>
           </>
         )}
       </CardContent>
