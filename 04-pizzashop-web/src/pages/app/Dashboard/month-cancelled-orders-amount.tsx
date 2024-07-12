@@ -4,6 +4,8 @@ import { DollarSign } from 'lucide-react'
 import { getMonthCanceledOrdersAmount } from '@/api/get-month-canceled-orders-amount'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
+import { MetricCardSkeleton } from './metric-card-skelleton'
+
 export interface MonthCancelledOrdersCardProps {}
 
 export function MonthCancelledOrdersCard() {
@@ -21,7 +23,7 @@ export function MonthCancelledOrdersCard() {
         <DollarSign className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-1">
-        {monthCancelledOrders && (
+        {monthCancelledOrders ? (
           <>
             <span className="text-2xl font-bold tracking-tight">
               {monthCancelledOrders.amount}
@@ -48,6 +50,8 @@ export function MonthCancelledOrdersCard() {
               </>
             )}
           </>
+        ) : (
+          <MetricCardSkeleton />
         )}
       </CardContent>
     </Card>
