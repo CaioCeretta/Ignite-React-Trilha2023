@@ -15,6 +15,7 @@ import {
 
 import { OrderTableFilters } from './order-table-filter'
 import { OrderTableRow } from './order-table-row'
+import { OrderTableSkeleton } from './order-table-skeleton'
 
 export function Orders() {
   /*
@@ -56,7 +57,7 @@ export function Orders() {
 
   /* If we make a function call whenever a parameter changes, we need to include then on the query key, otherwise, the
   key will already exist on the cache and that query will not be executed again */
-  const { data: results } = useQuery({
+  const { data: results, isLoading: isLoadingOrders } = useQuery({
     queryKey: ['orders', pageIndex, customerName, orderId, status],
     queryFn: () =>
       getOrders({
@@ -98,9 +99,13 @@ export function Orders() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {results?.orders.map((order) => {
-                  return <OrderTableRow order={order} key={order.orderId} />
-                })}
+                {isLoadingOrders ? (
+                  <OrderTableSkeleton />
+                ) : (
+                  results?.orders.map((order) => {
+                    return <OrderTableRow order={order} key={order.orderId} />
+                  })
+                )}
               </TableBody>
             </Table>
           </div>
