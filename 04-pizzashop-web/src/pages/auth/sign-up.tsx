@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label'
 const signUpForm = z.object({
   restaurantName: z.string(),
   managerName: z.string(),
-  phone: z.number(),
+  phone: z.string(),
   email: z.string().email(),
 })
 
@@ -90,7 +90,7 @@ export function SignUp() {
 
             <div className="space-y-2">
               <Label htmlFor="phone">Phone nº</Label>
-              <Input type="tel" id="phone" {...register('phone')}></Input>
+              <Input id="phone" type="tel" {...register('phone')} />
             </div>
 
             <div className="space-y-2">
