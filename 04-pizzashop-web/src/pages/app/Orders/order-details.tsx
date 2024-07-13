@@ -27,7 +27,7 @@ export interface OrderDetailsProps {
 }
 
 export function OrderDetails({ orderId, open }: OrderDetailsProps) {
-  const { data: order, isLoading: isLoadingOrderDetail } = useQuery({
+  const { data: order } = useQuery({
     queryKey: ['order', orderId],
     queryFn: () => getOrderDetails({ orderId }),
     /* By utilizing the enabled open, which we will receive that value from the dialog from order-data-row, it will cause
