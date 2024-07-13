@@ -19,13 +19,15 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+import { OrderDetailsSkeleton } from './order-details-skeleton'
+
 export interface OrderDetailsProps {
   orderId: string
   open: boolean
 }
 
 export function OrderDetails({ orderId, open }: OrderDetailsProps) {
-  const { data: order } = useQuery({
+  const { data: order, isLoading: isLoadingOrderDetail } = useQuery({
     queryKey: ['order', orderId],
     queryFn: () => getOrderDetails({ orderId }),
     /* By utilizing the enabled open, which we will receive that value from the dialog from order-data-row, it will cause
@@ -50,7 +52,7 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
         <DialogDescription>Order Details</DialogDescription>
       </DialogHeader>
 
-      {order && (
+      {order ? (
         <div className="space-y-6">
           <Table>
             <TableBody>
@@ -145,6 +147,8 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
             </TableFooter>
           </Table>
         </div>
+      ) : (
+        <OrderDetailsSkeleton />
       )}
     </DialogContent>
   )
