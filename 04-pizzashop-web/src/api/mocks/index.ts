@@ -2,15 +2,17 @@ import { setupWorker } from 'msw/browser'
 
 import { env } from '@/env'
 
-import { getMonthCanceledOrdersAmount } from '../get-month-canceled-orders-amount'
 import { getDailyRevenueInPeriodMock } from './get-daily-revenue-in-period-mock'
 import { getDaysOrdersAmountMock } from './get-day-orders-amount'
+import { getManagedRestaurantMock } from './get-manged-restaurant-mock'
 import { getMonthCanceledsOrdersAmountMock } from './get-month-canceled-orders'
-import { getMonthOrdersAmountMock, getMonthOrdersAmountMock } from './get-month-orders-amount'
+import { getMonthOrdersAmountMock } from './get-month-orders-amount'
 import { getMonthRevenueMock } from './get-month-revenue-mock'
 import { getPopularProductsMock } from './get-popular-products.mock'
+import { getProfileMock } from './get-profile-mock'
 import { registerRestaurantsMock } from './register-restaurant-mock'
 import { signInMock } from './sign-in-mock'
+import { updateProfileMock } from './update-profile-mock'
 
 /* MSW Explanation
 
@@ -49,6 +51,9 @@ export const worker = setupWorker(
   getMonthRevenueMock,
   getPopularProductsMock,
   getDailyRevenueInPeriodMock,
+  updateProfileMock,
+  getProfileMock,
+  getManagedRestaurantMock,
 )
 
 /*
