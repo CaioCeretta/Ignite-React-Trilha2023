@@ -2,6 +2,14 @@ import { setupWorker } from 'msw/browser'
 
 import { env } from '@/env'
 
+import { getMonthCanceledOrdersAmount } from '../get-month-canceled-orders-amount'
+import { getDailyRevenueInPeriodMock } from './get-daily-revenue-in-period-mock'
+import { getDaysOrdersAmountMock } from './get-day-orders-amount'
+import { getMonthCanceledsOrdersAmountMock } from './get-month-canceled-orders'
+import { getMonthOrdersAmountMock, getMonthOrdersAmountMock } from './get-month-orders-amount'
+import { getMonthRevenueMock } from './get-month-revenue-mock'
+import { getPopularProductsMock } from './get-popular-products.mock'
+import { registerRestaurantsMock } from './register-restaurant-mock'
 import { signInMock } from './sign-in-mock'
 
 /* MSW Explanation
@@ -32,7 +40,16 @@ In the setupWorker we pass all the mocks we created
 
 */
 
-export const worker = setupWorker(signInMock)
+export const worker = setupWorker(
+  signInMock,
+  registerRestaurantsMock,
+  getDaysOrdersAmountMock,
+  getMonthOrdersAmountMock,
+  getMonthCanceledsOrdersAmountMock,
+  getMonthRevenueMock,
+  getPopularProductsMock,
+  getDailyRevenueInPeriodMock,
+)
 
 /*
   By the moment we call this setupWorker, the mocks still are not going to function properly, the requests won't be intercepted
