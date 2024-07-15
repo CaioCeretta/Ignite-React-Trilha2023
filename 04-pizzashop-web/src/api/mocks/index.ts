@@ -2,6 +2,8 @@ import { setupWorker } from 'msw/browser'
 
 import { env } from '@/env'
 
+import { signInMock } from './sign-in-mock'
+
 /* MSW Explanation
 
 First we need to understand what are service workers. They are a type of web worker that run in the background, separate
@@ -25,12 +27,12 @@ suites
 - Realistic Mocking, by providing data that resembles real API responses
 - Declarative API, making it easy to define request handler and responses
 
-
+In the setupWorker we pass all the mocks we created
 
 
 */
 
-export const worker = setupWorker()
+export const worker = setupWorker(signInMock)
 
 /*
   By the moment we call this setupWorker, the mocks still are not going to function properly, the requests won't be intercepted
