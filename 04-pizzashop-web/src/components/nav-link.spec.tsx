@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import { k } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { MemoryRouter } from 'react-router-dom'
 
 import { NavLink } from './nav-link'
