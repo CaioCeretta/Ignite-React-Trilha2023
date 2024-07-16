@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('Sign in successfully', async ({ page }) => {
-  await page.goto('/auth/signin', {
+  await page.goto('/auth/sign-in', {
     waitUntil: 'networkidle',
   })
 
@@ -28,7 +28,7 @@ test('Sign in successfully', async ({ page }) => {
 })
 
 test('Sign in with wrong credentials', async ({ page }) => {
-  await page.goto('/auth/signin', {
+  await page.goto('/auth/sign-in', {
     waitUntil: 'networkidle',
   })
 
@@ -46,7 +46,7 @@ test('Sign in with wrong credentials', async ({ page }) => {
 test('Navigate to sign up by clicking the new estabilishment', async ({
   page,
 }) => {
-  await page.goto('/auth/signin', {
+  await page.goto('/auth/sign-in', {
     waitUntil: 'networkidle',
   })
 

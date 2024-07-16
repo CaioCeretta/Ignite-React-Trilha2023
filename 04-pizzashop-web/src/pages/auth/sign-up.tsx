@@ -44,7 +44,7 @@ export function SignUp() {
       toast.success('Resturant was successfully registered', {
         action: {
           label: 'Login',
-          onClick: () => navigate(`/auth/signin?email=${data.email}`),
+          onClick: () => navigate(`/auth/sign-in?email=${data.email}`),
         },
       })
     } catch {
@@ -57,7 +57,7 @@ export function SignUp() {
       <Helmet title="'Register'" />
       <div className="p-8">
         <Button variant={'ghost'} asChild className="absolute right-4 top-8">
-          <Link to={'/auth/signin'}>Sign In</Link>
+          <Link to={'/auth/sign-in'}>Sign In</Link>
         </Button>
         <div className="flex w-[350px] flex-col items-center justify-center gap-6">
           <div className="flex flex-col gap-2 text-center">
@@ -80,7 +80,7 @@ export function SignUp() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="restaurantName">Manager Name</Label>
+              <Label htmlFor="managerName">Manager Name</Label>
               <Input
                 type="text"
                 id="managerName"

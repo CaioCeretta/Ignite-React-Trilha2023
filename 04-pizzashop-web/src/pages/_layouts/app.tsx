@@ -17,7 +17,7 @@ export function AppLayout() {
           const code = error.response?.data.code
 
           if (status === 401 && code === 'UNAUTHORIZED') {
-            navigate('/auth/signin', { replace: true })
+            navigate('/auth/sign-in', { replace: true })
           } else {
             throw error
           }
