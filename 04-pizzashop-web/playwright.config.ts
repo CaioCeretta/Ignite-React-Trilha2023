@@ -6,6 +6,11 @@ export default defineConfig({
   /* Run the tests in parallel */
   fullyParallel: true,
 
+  /* Regex explanation: . means any character, the * means one or many tines, so it is any character one or many times
+  \. which will escape the dot and act as dot e2e-spec is the literal string, then we will escape the dot again and end with ts
+  the $ sign at the end will indicate that it HAS to end with .ts */
+  testMatch: /.*\.e2e-spec\.ts$/,
+
   /* To forbif when we want to execute ONLY one test */
   forbidOnly: !!process.env.CI,
 
