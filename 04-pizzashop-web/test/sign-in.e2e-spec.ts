@@ -22,9 +22,7 @@ test('Sign in successfully', async ({ page }) => {
 
   const toast = page.getByText('We sent you an authentication link')
 
-  expect(toast).toBeVisible()
-
-  await page.waitForTimeout(2000)
+  await expect(toast).toBeVisible()
 })
 
 test('Sign in with wrong credentials', async ({ page }) => {
@@ -38,9 +36,7 @@ test('Sign in with wrong credentials', async ({ page }) => {
 
   const toast = page.getByText('Invalid Credentials')
 
-  expect(toast).toBeVisible()
-
-  await page.waitForTimeout(2000)
+  await expect(toast).toBeVisible()
 })
 
 test('Navigate to sign up by clicking the new estabilishment', async ({
@@ -52,7 +48,5 @@ test('Navigate to sign up by clicking the new estabilishment', async ({
 
   await page.getByRole('link', { name: 'New Establishment' }).click()
 
-  expect(page.url()).toContain('/sign-up')
-
-  await page.waitForTimeout(2000)
+  await expect(page.url()).toContain('/sign-up')
 })
