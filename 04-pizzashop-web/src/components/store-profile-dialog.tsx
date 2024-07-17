@@ -145,13 +145,17 @@ export function StoreProfileDialog() {
             <Label className="text-right" htmlFor="name">
               Name
             </Label>
-            <Input className="col-span-3" {...register('name')} />
+            <Input className="col-span-3" id="name" {...register('name')} />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right" htmlFor="description">
               Description
             </Label>
-            <Textarea className="col-span-3" {...register('description')} />
+            <Textarea
+              className="col-span-3"
+              id="description"
+              {...register('description')}
+            />
           </div>
         </div>
 

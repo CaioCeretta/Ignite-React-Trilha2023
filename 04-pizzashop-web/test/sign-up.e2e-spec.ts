@@ -1,6 +1,4 @@
-import { getByRole } from '@testing-library/react'
 import { expect, test } from 'playwright/test'
-import { toast } from 'sonner'
 
 test('navigate to login page', async ({ page }) => {
   await page.goto('/auth/sign-up', { waitUntil: 'networkidle' })

@@ -26,7 +26,7 @@ export function MonthCancelledOrdersCard() {
         {monthCancelledOrders ? (
           <>
             <span className="text-2xl font-bold tracking-tight">
-              {monthCancelledOrders.amount}
+              {monthCancelledOrders.amount.toLocaleString('en-US')}
             </span>
             {monthCancelledOrders?.amount >= 0 ? (
               <>

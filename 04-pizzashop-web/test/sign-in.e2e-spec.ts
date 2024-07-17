@@ -52,7 +52,7 @@ test('Navigate to sign up by clicking the new estabilishment', async ({
 
   await page.getByRole('link', { name: 'New Establishment' }).click()
 
-  expect(page.url()).toContain('/signup')
+  expect(page.url()).toContain('/sign-up')
 
   await page.waitForTimeout(2000)
 })
