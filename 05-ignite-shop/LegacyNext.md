@@ -36,3 +36,9 @@ to see that the same image that was 637kb long, is now using only 23kb, and usin
 format, being faster and more performatic. 
 
 So next create a version of the image based on the properties we expect from that image, like the properties width, height
+
+When we set a next image inside a component, we must inform the width and the height of it, but that width and height does 
+not to be exact to what we want that image to have, because of different view ports and responsiveness, but we can say
+that the width and height that we pass is the largest width and the biggest height we'll need of the image. because that way 
+next image, whenever we import that image using it, it will shrink, and resize the image so we don't import sizes we don't
+need
