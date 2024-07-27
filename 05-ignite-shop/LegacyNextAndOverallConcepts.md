@@ -158,6 +158,71 @@ The only this function runs is when next is creating the static page, when we ru
 into production, next will look into every page that need to be static, and generate a static version of them.
 
 
+### Get Static Paths
+
+Get static paths is necessary for the SSG pages, different from the serverSideProps, it is needed on a static page that
+receive parameters to it, like the id in a dynamic product page. It's a method that return those ids (in this example),
+this method should return an array, which needs various objects inside it, and each object basically returns the product
+parameters i want to generate the static version, like this
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [
+      { params: { id: 'prod_QWy75S7LF26bTv'} }
+    ],
+    fallback: false
+  }
+}
+
+now by adding this static path, by building the project, and accessing the page of this product, it will run normally, but
+for the specific route that was generated the path, for any product that do not have that id, next won't generate a static page.
+
+However, for example, if we are in an e-commerce with thousands of products, we are not going to generate a static version
+for each one of them by id,  because run build would take too long. So this static paths, even though we want to create
+static versions in the moment of build, we can say to it something like, if there are other products that i didn't pass to
+it, we want it to behave in a different manner.
+
+
+##### SSG Fallback
+
+When we send a fallback to the getStaticPaths, in the build, we are telling that those are the parameters that must be utilized
+in the time of executing the getStaticProps, and there are cases that it won't be possible, for example, cases where there's
+going to be new shirts every week. It won't make sense for us to generate new shirts at every momennt, or for example, generating
+ten shirts and the new one that was inserted has to wait for the next deploy, it's a bit complex for us, tldr, isn't productive
+
+Let's think in the case that we have 10k+ products and we don't have a route for each one.
+Everything we pass on the paths is what is going to be generated a static page. So in this case we are going to create one for
+each most sold product / more accessed, so when we run the deploy it'll be better for the users
+
+and for the rest of the products, it's going to return a 404, and here's where the fallback function takes place.
+
+if we pass the fallback: false, when we try to access any page that is not one of the static paths, it will throws a 404,
+with the fallback:true what happens when we access a page where we did not pass into the paths, and next will try to get
+that product id and execute.
+
+If we simply say that the fallback is true, when we try to build or render any other page, it will retur, in our case, that
+we cannot read properties of imageUrl, this happens, because we need to know that next will show the html of the page and
+try to load the product data, under the hood, and when it finished loading the product data, it'll show it on the screen.
+However, if we try to log the products, and we go on the terminal, we will see that the product is undefined, because next
+will load our page without the product information and execute the getStaticProps asynchronously, so we need to create a
+loading state for this page. Now for us to detec if a loading is happening we utilize the isFallback from the useRouter
+function. For example
+
+  const { isFallback } = useRouter()
+
+  if (isFallback) {
+    return <p>Loading...</p>
+  }
+
+  now it will load the pages that aren't part from the ones specified on the staticPaths. Even though the fallback true does
+  what we expect from it, and load the products which weren't specified on the paths, there's another option, which was 
+  introduced in next versions and can also be valid for us, for when we don't create the loading state, which in many times
+  isn't recommended, there is the fallback: blocking, that won't show anything on screen, until there is something to show,
+  so we won't get the same error as we got from the imageUrl. However for the user it might be a worse experience. It usually
+  prefers to watch a screen loading that not seeing anything
+
+
+
 ## Project build
 
 by building the project we will observe a few things.
@@ -182,4 +247,6 @@ When we run the `npm build`command, we won't have access to anything like logged
 because this is just a build step. If at any point an API request requires a cookie or information about the logged-in user,
 the page cannot be static, because static pages are the same for all users. Therefore, if our page contains dynamic information
 that depends on the user ID or any other details about the logged-in user, it cannot be a static page.
+
+
 
