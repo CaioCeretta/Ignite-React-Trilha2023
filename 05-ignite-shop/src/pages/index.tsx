@@ -27,6 +27,7 @@ import { GetStaticProps } from "next";
 import { Roboto } from "next/font/google";
 import Image from "next/image";
 import Stripe from "stripe";
+import Link from "next/link";
 
 const roboto = Roboto({ weight: ["400", "700"], subsets: ["latin"] });
 
@@ -61,21 +62,21 @@ export default function Home({ products }: HomeProps) {
   }, []);
 
   return (
-    <>
-
       <HomeContainer ref={sliderRef} className="keen-slider">
         {products.map(product => (
-          <Product key={product.id} className="keen-slider__slide">
+          <Link href={`/product/${product.id}`} key={product.id}>
+          <Product
+            className="keen-slider__slide"
+          >
             <Image src={product.imageUrl} width={520} height={400} alt={product.name} />
             <footer>
               <strong>{product.name}</strong>
               <span>{product.price}</span>
             </footer>
           </Product>
+          </Link>
         ))}
-
       </HomeContainer>
-    </>
   );
 }
 
@@ -126,7 +127,7 @@ export default function Home({ products }: HomeProps) {
 // }
 
 export const getStaticProps: GetStaticProps = async () => {
-  
+
   /* The defaut price is used by stripe to "expand" certain attributes that, by default, are returned just as identifiers
   or partial objcets. by using expand, we are requesting stripe api to include the complete details of the related resources
   dyring the request.
