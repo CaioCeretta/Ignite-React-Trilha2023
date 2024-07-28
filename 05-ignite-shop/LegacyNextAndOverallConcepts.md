@@ -219,7 +219,7 @@ function. For example
   introduced in next versions and can also be valid for us, for when we don't create the loading state, which in many times
   isn't recommended, there is the fallback: blocking, that won't show anything on screen, until there is something to show,
   so we won't get the same error as we got from the imageUrl. However for the user it might be a worse experience. It usually
-  prefers to watch a screen loading that not seeing anything
+  prefers to watch a screen loading that not seeing anything.
 
 
 
@@ -247,6 +247,23 @@ When we run the `npm build`command, we won't have access to anything like logged
 because this is just a build step. If at any point an API request requires a cookie or information about the logged-in user,
 the page cannot be static, because static pages are the same for all users. Therefore, if our page contains dynamic information
 that depends on the user ID or any other details about the logged-in user, it cannot be a static page.
+
+## Links Prefetch
+
+Another next feature which is interesting, but at the same time it can be dangerous, is the link prefetching which happens
+automatically. This means that, for example, if we access and inspect the ntwork tab of the developer tools, we will see
+that besides loading the home, it made three calls for loading each product with the id shown on page, and as we hover over
+the products, we will see that next make another call to the same route which ends with json, making a prefetch of that page.
+
+so for next,  everytime we have a link on the screen, like the product page one, when it finds that link and understands it
+is on the screen, it makes a "intersection observer", which is a browser api that allows us to observe when elements show
+on the screen, when next sees one link, it will do a prefetch of that page, so when the user clicks, it is already loaded.
+
+While it can be goood for the user, that speed on loading, it can also be bad, because if we have many links on the screen,
+under the hood next is making the requests, if we want to stop it, on the link we must say that the prefetch is false, so
+if the link is on the page, it won't load automatically, but if we hover on it, yes
+
+
 
 
 
