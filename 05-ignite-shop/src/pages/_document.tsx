@@ -20,7 +20,9 @@ import { Html, Head, Main, NextScript } from "next/document";
 
   It's used to indicate next in what place of the html, the page contents should be placed.
   
-  And the NextScript is basically in what we place we want to load our js scripts. k
+  And the NextScript is basically in what we place we  want to load our js scripts. k
+
+  And we need to remember, every code we put in here, is going to be loaded in all our pages
 
 */
 
