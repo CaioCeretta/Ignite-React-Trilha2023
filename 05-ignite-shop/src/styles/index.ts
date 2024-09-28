@@ -12,6 +12,8 @@ export const {
 }  = createStitches({
   theme: {
     colors: {
+      rocketseat: '#8257e6',
+
       white: '#fff',
 
       'gray-900': '#121214',
