@@ -18,11 +18,26 @@ after /product, so we can utilize anything after the / that it should work, is l
 the value of that parameter simply by adding  const router = useRouter() and using router.paramName. The value will be available
 on that case inside router.query, being possible to destructure it with const { id} = router.query
 
-To ensure that our styles are going to be rendered even when the javascript is turned off, we need to, on the head tag of
-our document, to add a style tag with the id stitches and a dangerouslySetInnerHtml={{__html: getCssText()}}, the getCssText
-from the backend side, when the user loads our page, on the next server it'll mount the page inside the next js (node server)
-check what are the necessary css for that page and return in this function, and it will return that css on a style tag, by doing that
-we will see that on the head of the pages, in a style tag with the id stitches with all the styles we utilized
+If we refresh our page, we will see that every time the css is being applied to our project with zero problems, but if we
+go into our inspect and disable the js, we are going to see that the whole css has not been fully applied, only the
+traditonal HTML. 
+
+This happens because the vast majority css libraries we use to work with, they are libraries that style our component at
+run time, which means that the CSS is going to be applied only on the client browser.
+Next work with the concept or SSR, so even if we disable JS, the content of our page is still going to be shown on the
+screen.
+Different from cases where we use react, and don't have next in its code, the UI code, if we disable the JS, won't even
+show up, because the whole code is created in run time.
+
+In Next, when the user accesses our page, in realitym he's accessing a node server, and that node server will create the UI
+on the server side for us, and it returns the full HTML to the browser, that's why we can visualize the interface even with
+browser's js disabled, because it's not the browser who's creating the interface, is the node server.
+
+To ensure that our styles are going to be rendered even when the javascript is turned off, for the SSR, we need to, on
+the head tag ofour document, to add a style tag with the id stitches and a dangerouslySetInnerHtml={{__html: getCssText()}},
+the getCssText, which is returned by the stitches initialization function, will, from the backend side, load the page inside
+inside the next js (node server), check what is the necessary css for that page and return in this function. It will return
+that css on a style tag, by doing that we will see that on the head of the pages, in a style tag with the id stitches with all the styles we utilized
 
 __________________________________________________________________________________________________________________________
 
