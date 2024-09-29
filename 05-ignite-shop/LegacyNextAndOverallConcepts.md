@@ -55,21 +55,42 @@ and put the desired css into it, then, we are going to use it on the app, simila
 ________________________________________________________________________________________________________________________
 
 ## Image 
-The way next treat images are similar from the legacy next to the latest one, it will, for example, get an image of 1000px
-if we simply place in our code with a normal img tag, it will take, in this example, 619kb and will maintain the png type
-even if we don't use the transparency of a png type
 
-If we change our tag img, that we were using on this image, to a Image imported from next/image, we are going to be able
-to see that the same image that was 637kb long, is now using only 23kb, and using the format webp, which is a more recent
-format, being faster and more performatic. 
+The way next treat images are similar from the traditional one, in the traditional one, we'll export image that has a specific
+format, sizes, and so on. When we export them and bring them into our front-end to apply them on the web, we often need
+those images to be loaded in a performatic manner, and for it to happen, there is a lot of places we need to be careful.
 
-So next create a version of the image based on the properties we expect from that image, like the properties width, height
+For example, if we are loading an image, and that image has a width of 1000px, but we only want to use 400px, why are we
+loading an image so large? or why an image that does not have transparency, and i'm using a png in this case knowing that
+jpg is smaller and fast to be loaded? This will make us be very careful when exporting those images.
 
-When we set a next image inside a component, we must inform the width and the height of it, but that width and height does 
-not to be exact to what we want that image to have, because of different view ports and responsiveness, but we can say
-that the width and height that we pass is the largest width and the biggest height we'll need of the image. because that way 
-next image, whenever we import that image using it, it will shrink, and resize the image so we don't import sizes we don't
-need
+But what next do for us, is that it automatically optimizes every image we use in our application, which means that, if we
+import an image that's bigger than what we're using, next will create a version of that image, that will have only the
+quantity of pixels we're using. Next can also convert the format of the image, create responsive images from where it is
+being used.
+
+To understand it better, the instructor is showing to us a whole figma page being exported, and importing it into the
+project.
+The image has 600kb and has the dimensions of 1640 * 900.
+
+So at first, we'll utilize the html traditional img tagIf we place that file in our project and assign it to a variable.
+By going to the developer tools > network tab, we'll see that the image has been imported with 610kb with the type of png.
+But if we now, change the tag <img> to the <Image /> that comes from next/image library.
+
+In the instructor code he used a feature that hasn't been applied yet, but we already have access to it, so for future
+knowledge, if it happens when we're coding, we would have to update the next config
+
+With next image, we will notice that if we go to the shame network tab on the developer tools, the image we previously
+loaded with 23kb, instead of 610kb, and using a format named webp, which is a more recent format, much more performatic,
+more than png or jpg. We will also notice that it diminished the image quality to 75%.
+
+Now if we go to the <Image> tag and pass to it a fixed, even lower, we will see that the imported image is even smaller,
+because next creates a version of the image based on the properties we expect from it. 
+
+So if we say to next, to use this image on a container that has 400px width, next will be smart enough to convert this image
+to a smaller size which is going to be utilized
+
+
 
 #######################################################################################################################
 
