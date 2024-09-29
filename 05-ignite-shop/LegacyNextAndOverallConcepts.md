@@ -39,7 +39,20 @@ the getCssText, which is returned by the stitches initialization function, will,
 inside the next js (node server), check what is the necessary css for that page and return in this function. It will return
 that css on a style tag, by doing that we will see that on the head of the pages, in a style tag with the id stitches with all the styles we utilized
 
-__________________________________________________________________________________________________________________________
+________________________________________________________________________________________________________________________
+
+## Styling
+
+When we were creating our styles with styled-components, we were used to create the styles file and the component file in
+the same folder, but as we know, next works differently, if we do it like this, it will understand that the styles is another
+file, because of the file routing, so it's common for us, on this cases, create a separate folder, inside our styles folder
+, create a pages folder where we will add the specific styling for each page.
+
+So for example, if we will create a specific header styling for our tag header, we will create a component for that Header
+and put the desired css into it, then, we are going to use it on the app, similar to styled-components
+
+
+________________________________________________________________________________________________________________________
 
 ## Image 
 The way next treat images are similar from the legacy next to the latest one, it will, for example, get an image of 1000px
