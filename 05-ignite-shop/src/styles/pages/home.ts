@@ -75,7 +75,11 @@ import { styled } from "..";
 export const HomeContainer = styled('main', {
   display: 'flex',
   width: '100%',
-  gap: '3rem',
+  // gap: 3,
+  /*  if we use this gap to the separate the items inside the container, the slider won't understand this gap to contabilize
+    in the size of the slider and it will cause the container to be smaller. A visual effect of this will be the container
+    to be smaller than it should. So we'll utilize a padding in the product file
+  */
   maxWidth: 'calc(100vw - (100vw - 1180px) / 2)',
   marginLeft: 'auto',
   minHeight: '656px'
@@ -90,6 +94,7 @@ export const Product = styled('a', {
   // Because the footer will have a position absolute, so it will be right at the bottom. over the image
   position: 'relative',
   overflow: "hidden",
+  
 
   /* For the image to be completely centralized in the container, it will be a flex, with both justify and align center. */
   display: "flex",

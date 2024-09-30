@@ -12,7 +12,7 @@ globalStyles()
  
 
 export default function App({ Component, pageProps }: AppProps) {
-  return (
+  return ( 
     <Container>
       <Header>
         <Image src={logoImg} alt="" width={120} height={120} />

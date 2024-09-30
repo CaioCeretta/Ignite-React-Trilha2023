@@ -4,7 +4,11 @@ import { HomeContainer, Product } from '@/styles/pages/home'
 import tshirt1 from '../assets/tshirt-1.png'
 import tshirt2 from '../assets/tshirt-2.png'
 import tshirt3 from '../assets/tshirt-3.png'
+import tshirt4 from '../assets/tshirt-4.png'
+
 import Image from 'next/image'
+
+import { useKeenSlider } from 'keen-slider/react'
 
 /*
   The styling comments will be present on the styles file  
@@ -21,15 +25,27 @@ import Image from 'next/image'
   Now, for the product details, we are going to use the footer, it normally is the best element for us to use in these
   cases.
 
+  For the carousel using keenslider, we import the useKeenSlider from keen-slider/react, call the function and assign to
+  the first item of the returned array, the reference of where in our code we'll place this slider. Then, in the div the
+  wraps the items we use this ref and a className of keen-slider and on each item we set the clasName as keen-slider__slide
+
 
   
 
 */
 
 export default function Home() {
+
+  const [sliderRef] = useKeenSlider({
+    slides: {
+      perView: 3,
+      spacing: 48
+    }
+  })
+
   return (
-    <HomeContainer>
-      <Product>
+    <HomeContainer ref={sliderRef} className='keen-slider'>
+      <Product className="keen-slider__slide">
         <Image src={tshirt1}
           alt="tshirt1"
           width={520}
@@ -42,7 +58,7 @@ export default function Home() {
         </footer>
       </Product>
 
-      <Product>
+      <Product className="keen-slider__slide">
         <Image src={tshirt2}
           alt="tshirt2"
           width={520}
@@ -54,6 +70,33 @@ export default function Home() {
           <span>$ 50.00</span>
         </footer>
       </Product>
+
+      <Product className="keen-slider__slide">
+        <Image src={tshirt3}
+          alt="tshirt3"
+          width={520}
+          height={520}
+        />
+
+        <footer>
+          <strong>Shirt XII</strong>
+          <span>$ 50.00</span>
+        </footer>
+      </Product>
+
+      <Product className="keen-slider__slide">
+        <Image src={tshirt4}
+          alt="tshirt3"
+          width={520}
+          height={520}
+        />
+
+        <footer>
+          <strong>Shirt XIII</strong>
+          <span>$ 50.00</span>
+        </footer>
+      </Product>
+
 
 
     </HomeContainer>

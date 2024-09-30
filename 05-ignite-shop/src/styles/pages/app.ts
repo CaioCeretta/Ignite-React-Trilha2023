@@ -6,6 +6,8 @@ export const Container = styled('div', {
   alignItems: 'flex-start',
   /* We have also the possibility of using dvh instead of vh, dvh is dynamic view height, it can sometimes, make it a bit
   awkward to the user because it can cause layout shifts */
+
+  
   minHeight: '100vh',
   justifyContent: 'center'
 })
