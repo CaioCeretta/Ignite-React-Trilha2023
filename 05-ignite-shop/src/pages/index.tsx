@@ -9,6 +9,7 @@ import tshirt4 from '../assets/tshirt-4.png'
 import Image from 'next/image'
 
 import { useKeenSlider } from 'keen-slider/react'
+import { stringify } from 'querystring'
 
 /*
   The styling comments will be present on the styles file  
@@ -34,7 +35,7 @@ import { useKeenSlider } from 'keen-slider/react'
 
 */
 
-export default function Home() {
+export default function Home(props) {
 
   const [sliderRef] = useKeenSlider({
     slides: {
@@ -44,7 +45,12 @@ export default function Home() {
   })
 
   return (
+
+    
     <HomeContainer ref={sliderRef} className='keen-slider'>
+
+      <pre>{JSON.stringify(props)}</pre>
+
       <Product className="keen-slider__slide">
         <Image src={tshirt1}
           alt="tshirt1"
@@ -101,4 +107,12 @@ export default function Home() {
 
     </HomeContainer>
   )
+}
+
+export const getServerSideProps = () => {
+  return {
+    props: {
+      list: [1, 2, 3]
+    }
+  }
 }

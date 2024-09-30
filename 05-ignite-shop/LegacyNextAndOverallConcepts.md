@@ -94,43 +94,59 @@ to a smaller size which is going to be utilized
 
 #######################################################################################################################
 
+
 ## Server Side Code
 
 ### Get Server Side Props
 
-If we used, as the typical way of creating a component, like, using the  call on an api, fill the array with the api fetch
-and this like that it won't work on how the crawlers are actually working in our app, if we disable javascript and try to
-load the same page, what javascript is going to show from our page, is just an empty array which should be filled. So basically
-what next is doing is when we load the page for the first time it will create a version of that page with the html, css
-inside the next.js layer. But everything that we run on the client side like useEffects, libraries, and all of it, those things
-are not going to run. 
+Since we started learning about react, we've learnt that we can make API inside the component to populate a state, makea
+a list, or whatever we want to do. 
 
-But in next there is a way we can outcome it, a way we tell next that we want that api call to also run on the next server layer
+So as axample we would create a useEffect, some kind of data fetching. We have a list state, that is an array of numbers,
+then on the useEffect we have a setList with the array 1, 2, 3.
+We can pretend that this is like an api call, it will fill the state with those informations.
 
-This is how we do it, inside any file that is under page folder, is by utlizing, after the component (or before), a function
-named getServerSideProps, that function can return us a list of properties, for example. in the products page, in something
-like
+The point here is, next has its purpose for why it existed, that is ssr and ssg.
 
-const getServerSideProps = () => {
-return {
-  props: {
-    list: ['product1', 'product2', 'product3']
+When crawlers, bots, indexators, access our site, it will access it with disabled JS or he will not wait for it to under-
+stand that the page content has already been loaded, and if we are developing a page, like for example, an e-commerce that
+needs indexation, many times it will be a problem for us. 
+
+Even that list state we populated from useEffect, we won't see it anymore because it only runs on the client side. So
+everything we see on the screen is what was created from the NextJS node layer, and if we were on a traditional SPA, such
+as a react app, it wouldn't even exist. 
+
+This is one of the reasons why next was created, what next does is, when we access the page for the firt time, it will
+create a version of the page, with the whole markup, css, etc. On that layer, BUT,everything that runs only on the client
+side, like any hooks, or JS specific libraries, they won't execute.
+
+But, there is still another way for us to tell next that we want this API call to be executed on
+the server side, and not only on the front-end side.
+
+In any file that is inside the pages folder, we can export a constant named getServerSideProps where we obtain properties
+from the server side. In other words, the next js node layer. That function can return some properties, such as the list
+we were using, that contains an array with 1, 2, 3, the basic syntax is 
+
+export const getServerSideProps = () => {
+  return {
+    props: {
+      list: [1, 2, 3]
+    }
   }
 }
-}
 
-and in next js, they can be received as a parameter of the component, so we would be able to access those values just by
+that code is commonly used at the end of the file.
 
-export default function ComponentName(props) {
-   return (
-    <>
-    <pre>{JSON.stringify(props.list)}</>
-    </>
-   )
-}
+As the name says, we are returning props, and in react we know that properties can be received from the parameters, so as
+soon as we write props on the arguments, the props in this case, is going to be an object containing the list property, so
+a JSON.stringify of these props would return us {"list":[1,2,3]}
 
-even with the javascript disabled.
+When we were using the useEffect, we could see that the page would be rendered by complete, except with our list information
+that would come after one second (based on the setInterval).
 
+But now, as we are getting the serverSideProps, even if we use a setTimeout on this functionm, we'll notice that the timeout
+will happen, but in this case, our page as whole will take 2 seconds to show up, the nodejs will return us the complete page,
+different from the useEffect that will show the page and then wait the timeout 
 
 There's one important thing to notice, is that we'll never have a loading state, because the page will only load after
 the props were loaded. 
