@@ -5,18 +5,12 @@ import { stripe } from '@/lib/stripe'
 import Stripe from "stripe"
 import Image from "next/image"
 
-interface ProductProps {
-  product: {
-    id: string,
-    name: string,
-    imageUrl: string,
-    url: string,
-    price: number,
-    description: string
-  }
-}
 
 export default function Product({ product }: ProductProps) {
+
+  const { query } = useRouter();
+
+
   /*
     The request for obtaining product data can be made by getting the id from the url param and using `useEffect`
     to populate the product. However, we previously learned that if we do it this way, the data will not be loaded when
@@ -32,33 +26,30 @@ export default function Product({ product }: ProductProps) {
     best approach in this scenario
   */
 
-  const { isFallback } = useRouter()
-
-  if (isFallback) {
-    return <p>Loading...</p>
-  }
-
-
-
   return (
     <ProductContainer>
       <ImageContainer>
-        <Image src={product.imageUrl} alt="product-image" width='520' height='480' />
+
       </ImageContainer>
 
       <ProductDetails>
-        <h1>{product.name}</h1>
-        <span>{product.price}</span>
+        <h1>Shirt X</h1>
+        <span>$ 79,90</span>
 
-        <p>{product.description}</p>
+        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque consectetur tempore iure culpa iste sit
+          fugit recusandae qui rerum in, similique ipsa. Mollitia sed provident assumenda esse dolore vitae iure.</p>
 
         <button>
-          Buy now
+          Buy Now!
         </button>
       </ProductDetails>
     </ProductContainer>
   )
+
+
+
 }
+
 
 /* From the params we are able to get the variable we sent in the url.
 
