@@ -1,15 +1,23 @@
 
 
 import { HomeContainer, Product } from '@/styles/pages/home'
-import tshirt1 from '../assets/tshirt-1.png'
-import tshirt2 from '../assets/tshirt-2.png'
-import tshirt3 from '../assets/tshirt-3.png'
-import tshirt4 from '../assets/tshirt-4.png'
 
 import Image from 'next/image'
 
+import { stripe } from '@/lib/stripe'
 import { useKeenSlider } from 'keen-slider/react'
-import { stringify } from 'querystring'
+import { GetStaticProps } from 'next'
+import Stripe from 'stripe'
+
+interface HomeProps {
+  products: {
+    id: string;
+    name: string;
+    imageUrl: string;
+    price: number;
+  }[]
+}
+
 
 /*
   The styling comments will be present on the styles file  
@@ -35,7 +43,7 @@ import { stringify } from 'querystring'
 
 */
 
-export default function Home(props) {
+export default function Home({ products }: HomeProps) {
 
   const [sliderRef] = useKeenSlider({
     slides: {
@@ -46,62 +54,27 @@ export default function Home(props) {
 
   return (
 
-    
+
     <HomeContainer ref={sliderRef} className='keen-slider'>
 
-      <pre>{JSON.stringify(props)}</pre>
+      {products.map(product => {
+        return (
+          <>
+            <Product key={product.id} className="keen-slider__slide">
+              <Image src={product.imageUrl}
+                alt="tshirt3"
+                width={520}
+                height={520}
+              />
 
-      <Product className="keen-slider__slide">
-        <Image src={tshirt1}
-          alt="tshirt1"
-          width={520}
-          height={520}
-        />
-
-        <footer>
-          <strong>Shirt X</strong>
-          <span>$ 50.00</span>
-        </footer>
-      </Product>
-
-      <Product className="keen-slider__slide">
-        <Image src={tshirt2}
-          alt="tshirt2"
-          width={520}
-          height={520}
-        />
-
-        <footer>
-          <strong>Shirt XI</strong>
-          <span>$ 50.00</span>
-        </footer>
-      </Product>
-
-      <Product className="keen-slider__slide">
-        <Image src={tshirt3}
-          alt="tshirt3"
-          width={520}
-          height={520}
-        />
-
-        <footer>
-          <strong>Shirt XII</strong>
-          <span>$ 50.00</span>
-        </footer>
-      </Product>
-
-      <Product className="keen-slider__slide">
-        <Image src={tshirt4}
-          alt="tshirt3"
-          width={520}
-          height={520}
-        />
-
-        <footer>
-          <strong>Shirt XIII</strong>
-          <span>$ 50.00</span>
-        </footer>
-      </Product>
+              <footer>
+                <strong>{product.name}</strong>
+                <span>$ {product.price / 100}</span>
+              </footer>
+            </Product>
+          </>
+        )
+      })}
 
 
 
@@ -109,10 +82,31 @@ export default function Home(props) {
   )
 }
 
-export const getServerSideProps = () => {
+export const getStaticProps: GetStaticProps = async () => {
+  const response = await stripe.products.list({
+    expand: ['data.default_price']
+  })
+
+  const products = response.data.map(product => {
+    const price = product.default_price as Stripe.Price
+
+    return {
+
+        id: product.id,
+        name: product.name,
+        imageUrl: product.images[0],
+        price: new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD'
+        }).format(price.unit_amount! / 100)
+      
+    }
+  })
+
   return {
     props: {
-      list: [1, 2, 3]
-    }
+      products
+    },
+    revalidate: 60 * 60 * 2, // 2 hours
   }
 }

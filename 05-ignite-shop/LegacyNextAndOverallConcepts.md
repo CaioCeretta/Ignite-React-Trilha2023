@@ -161,10 +161,13 @@ But not all requests are going to be made on that function, because as we can se
 take longer to build, and even though the data came populated right on the beginning, for the user that's using this app,
 it can be a little annoying. So in most of the times, we are going to prefer doing these api calls, on the same way we always
 did. We are only going to utilize it, when we need page information that we necessarily need them to be available as soon
-as the page is available on screen, only crucial information of being on the screen, such as information for indexes,
-robots, bots, crawlers or anything of the type. We do not use it for everything
+as the page loads, only crucial information of being on the screen, for indexers, robots, bots, crawlers or anything of
+the type. We do not use it for everything
 
 When we run the getServerSideProps instead of the useEffect, to load the products, we are running on a node back end.
+
+
+# Stripe Call
 
 So any code that run inside of it, won't be visible to the client user, so one use case of us using it is when we need to make
 an api call that needs to be hidden from the client, and one of the cases we are going to run, is one of them.
@@ -172,7 +175,63 @@ Because we are going to load the products from stripe, and in stripe we have two
 secret one, the public, even though it is public and don't hold sensitive data, is a key that don't allow us to fetch data
 from stripe. She's a key only used for checkout, and those cases, while the secret key allows us to list products, access
 to all stripe functionalities.
-This means that the, if we need to use the secret key, it's better for us to run the code on the server side.
+This means that if we need to use the secret key, it's better for us to run the code on the server side.
+
+when using getServerSidePops  another good thing to do is to type the function, such as
+
+export const getServerSideProps: GetServerSideProps = async () => {}
+
+Another tip is, because we don't want all of the data being returned by stripe, we can transform those datas, by transforming
+we're talking about creating a new object with only the properties we want, like the below...
+
+One thing we need to know about this function is that stripe doesn't return to us the price, he works with something called
+"expanding responses", that is basically we "expand" a relationship inside a response, so if we list all the products,
+
+we can see that the product has a default_price which is expandable, and it returns to us, the price is a relationship
+with the product, so it will return to us the id of the price with the product, but we can expand this and it will return
+us the whole price object, not just the id so in the list fetch we'll pass a configuration object with a option named
+expand.
+
+
+because when it is a list, it comes from an object data, if it was a unique data, we could access it with expand: 'default_price'
+
+one thing we need to be careful is, we utilize it like this and pass as property the price: product.default_price, ts won't
+know if we are talking about an id of the price, or the object returned by default price, so what we need to do is, where
+we map over the products, create a constant casting it as a Price, which would be
+
+const price = product.default_price as Stripe.Price
+
+ 
+
+Because we are dealing with a list of products it will have to be deta.default_price
+
+the final code will be as follows
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const response = await stripe.products.list({
+    expand: ['data.default_price']
+  })
+
+    const products = response.data.map(product => {
+    const price = product.default_price as Stripe.Price
+
+    return {
+
+      props: {
+        id: product.id,
+        name: product.name,
+        imageUrl: product.images[0],
+        price: price.unit_amount
+      }
+    }
+  })
+
+  return {
+    props: {
+      products
+    }
+  }
+}
 
 
 Now there's one thing we need to pay attention, if we refresh the page multiple times we are still going to get the same
@@ -219,8 +278,27 @@ Just by doing that, similar to the getServerSideProps, but the main difference o
 on every request made to the page, it will only run on the time where next is creating a static version, or a cached version
 of the page.
 
-The only this function runs is when next is creating the static page, when we run the build of our application, when we put our app
-into production, next will look into every page that need to be static, and generate a static version of them.
+The first time this function runs is when when we run the build of our application, when we put our app into production,
+next will look into every page that need to be static,that has the getStaticProps, and generate a static version of them.
+
+on build, we are going to see every page being builded, if it is static, if it uses ssg, if it use isr (uses revalidate
+on getStaticProps), or f, which is dynamic, meaning that server is rendered on demand.
+
+A SSG, in addition to receiving the props, we can also set a property named revalidate, which is how many seconds we want
+this page to be recreated, so if, for example, we have a revalidate of five seconds, this page, will generate a static
+version on build time, but now, every five seconds, a person accesses this page, next under the hood, will generate a new
+version of this page for us.
+
+So every user that accesses the page, will receive the same static version. 
+
+One thing to be aware of, is that when we use GetStaticProps, different from GetServerSideProps, we don't get access to
+the request context, neither req, nor res.
+This means that when we use GetStaticProps, we can't, inside of the function, get access to information of the logged
+user, cookies, or anything like this.
+Because this function is executed in the build moment, and when we run the build, there is nothing happening.
+So if in any moment, this API request, need any cookie, or information about the user, we are not going to create a static
+version of it, because static pages, are pages that are going to be equal for any user that access it, so any dynamic content
+won't work.
 
 
 ### Get Static Paths
