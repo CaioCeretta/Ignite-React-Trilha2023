@@ -2,6 +2,7 @@ import { stripe } from '@/lib/stripe'
 import { ImageContainer, ProductContainer, ProductDetails } from "@/styles/pages/product"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/image"
+import { useRouter } from 'next/router'
 import Stripe from "stripe"
 
 interface ProductProps {
@@ -39,10 +40,16 @@ export default function Product({ product }: ProductProps) {
 
   */
 
+  const { isFallback } = useRouter()
+
+  if (isFallback) {
+    return <p>Loading...</p>
+  }
+
   return (
     <ProductContainer>
       <ImageContainer>
-        <Image src={product.imageUrl} alt={product.name} width={520} height={480}/>
+        <Image src={product.imageUrl} alt={product.name} width={520} height={480} />
       </ImageContainer>
 
       <ProductDetails>
@@ -166,7 +173,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     paths: [
       { params: { id: 'prod_QWy75S7LF26bTv' } }
     ],
-    fallback: false
+    fallback: true
   }
 }
 
@@ -184,6 +191,50 @@ export const getStaticPaths: GetStaticPaths = async () => {
  * it will run the fallback. So the get static pathhs, we must choose which dynamic path we want to generate a static version
  * of it. So we can tell next that if the id we tried to reach, does not have a static version, we want it to behave in 
  * a specific way, this is where the fallback takes place.
+ * 
+ * So when generating a static path, we are telling next that when we run the build command, these are the specific params
+ * it will utilize when executing the method getStaticProps, so it will run multiple times for each one of these items.
+ * 
+ * But there are some cases that are a bit complicated, like if we had thousands of products in our store, and besides it
+ * we are going to have cases where we have incremental things, let's say we have a e-commerce where each week we add new
+ * shirts, it does not make sense for us to keep adding the new paths for these shirts, or generate in a static way, 10
+ * shirts and the new one we add will have the next deploy.
+ * 
+ * We need to understand that even though this method helps us in some ways, it also has to "understand" we might have
+ * more products over time.
+ * 
+ * Let's use as an example this e-commerce with more than 10k products. First of all, everything we pass inside the paths
+ * is what is going to be statically created in the build moment, so we need to make sure to keep it as lean as possible*  
+ * So in this case we have two option
+ * 
+ * 1 - We will get the most sold products or more accessed, and pass to these paths only these products.
+ * 2 - Fallback: When we pass the fallback as false, when we try to access any page that has not been specified on the paths
+ *     it will return 404. 
+ *     But if the fallback is true, what is going to happen is, when we access one of these pages that hasn't been specified
+ *     to paths, next will TRY to get the id we are trying to access, try to execute the getStaticProps with it, to fetch data
+ *     of this new product and then try to generate its static version.
+ *     
+ *     So next will load our html, without the product information, and run the getStaticProps asynchronously. and after it
+ *     finishes fetching the product data, it will fill the html.
+ * 
+ *     For this to run without a problem, we would have to create a loading state, for this we have several options
+ * 
+ *     . We could create skeletons for the page while it is loading
+ *     . Use the isFallback from the useRouter to add a Loading text when it is happening
+ *      
+ *     Now even though fallback true is doing what we would expect from it, that is loading the products which haven't been
+ *     still loaded. There is another option, that can also be valid if we don't want to create this loading state, which
+ *     in most of the times, is the recommended, which is the fallback blocking
+ * 
+ *      Fallback: blocking will "lock" the page, it won't show anything on screen until there is something to show. And despite
+ *      this solves the problem of we don't having to check the fallback, for the end user, is commonly a worse option for the
+ *      user.
+ * 
+ *
+ *   
+ *     
+ * 
+ * 
  * 
  * 
  * 
