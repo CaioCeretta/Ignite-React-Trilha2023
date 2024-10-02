@@ -410,7 +410,33 @@ if we pass the value of the false, next will ignore it until it's clicked.
 
 Now if we run build, go to the home page, no link is being loaded until is hovered over.
 
-## 
+## API Routes in Next
+
+We know that a next application is separated in 2 layers, there is also the API layer, but it's not required.
+
+It is a node server, the server side, and the visual part which is being visualized by the client.
+
+If everytime we run a next application, we also run a node server, we tend to think that "If we are running that node server,
+can i have routes just like a backend? Routes that return data from a db and run actions a traditional backend would execute?".
+
+The answer to do is yes, we can have this in next, and even though it's not the most recommended for all types of project,
+for many projects and some functionalities, it's ok for us to have backend routes inside our front-end.
+
+This is happens mainly in cases where we don't have an external API, and we can create some back-end routes on the next app
+to do some simple functionalities, OR, we have some functionality we want to include in our app, that it needs to run on the
+server side, but is specific to the web part of our app. So in this cases we should use on the next node server, because if
+it was on the backend api, it would end up messing other clients, be them mobile, public api, or basically aren't running
+on the context of a web application.
+
+We can use as an example if we were creating an authentication with google, oauth, etc. They are functionalities that 
+the way we use to create it, is very specific to the environment the user is running the application, and we'll need to
+have code running on the server side. This is one of the cases where is worth of us putting on the node server instead
+of on the API because this is not made the same way on other clients, be them mobile or so.
+
+For us to create create routes in our application, that are disponibilized by the node server, on the pages, we just need
+to create an API folder. **The Rest of the API explanation will be on the api folder**
+
+ 
 
 
 
