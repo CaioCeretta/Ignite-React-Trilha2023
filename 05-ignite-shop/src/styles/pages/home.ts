@@ -75,7 +75,6 @@ import { styled } from "..";
 export const HomeContainer = styled('main', {
   display: 'flex',
   width: '100%',
-  // gap: 3,
   /*  if we use this gap to the separate the items inside the container, the slider won't understand this gap to contabilize
     in the size of the slider and it will cause the container to be smaller. A visual effect of this will be the container
     to be smaller than it should. So we'll utilize a padding in the product file
@@ -85,7 +84,7 @@ export const HomeContainer = styled('main', {
   minHeight: '656px'
 })
 
-export const Product = styled('a', {
+export const Product = styled('div', {
   background: 'linear-gradient(180deg, #1ea483 0%, #7465d4 100%)',
   borderRadius: 8,
   cursor: 'pointer',

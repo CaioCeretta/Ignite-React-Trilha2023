@@ -393,19 +393,8 @@ that depends on the user ID or any other details about the logged-in user, it ca
 
 ## Links Prefetch
 
-Another next feature which is interesting, but at the same time it can be dangerous, is the link prefetching which happens
-automatically. This means that, for example, if we access and inspect the ntwork tab of the developer tools, we will see
-that besides loading the home, it made three calls for loading each product with the id shown on page, and as we hover over
-the products, we will see that next make another call to the same route which ends with json, making a prefetch of that page.
-
-so for next,  everytime we have a link on the screen, like the product page one, when it finds that link and understands it
-is on the screen, it makes a "intersection observer", which is a browser api that allows us to observe when elements show
-on the screen, when next sees one link, it will do a prefetch of that page, so when the user clicks, it is already loaded.
-
-While it can be goood for the user, that speed on loading, it can also be bad, because if we have many links on the screen,
-under the hood next is making the requests, if we want to stop it, on the link we must say that the prefetch is false, so
-if the link is on the page, it won't load automatically, but if we hover on it, yes
-
+Another next feature which is interesting, but at the same time it can be dangerous, is the link prefetching which next
+does automatically, if we, for a example, access the homepage, 
 
 
 

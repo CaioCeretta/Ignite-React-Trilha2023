@@ -18,7 +18,7 @@ export const ImageContainer = styled('div', {
   maxWidth: 576,
   /* In figma we have the height of the container as 656px, but we are making minus 0.5rem because of the padding y.
   This could also be done with box-sizing border-box (which is what we are going to do) */
-  height: '656px',
+  height: 656,
   background: 'linear-gradient(180deg, #1ea483 0%, #7465d4 100%)',
   borderRadius: 8,
   padding: '0.25rem',
