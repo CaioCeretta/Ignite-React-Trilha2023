@@ -79,7 +79,7 @@ export const HomeContainer = styled('main', {
     in the size of the slider and it will cause the container to be smaller. A visual effect of this will be the container
     to be smaller than it should. So we'll utilize a padding in the product file
   */
-  maxWidth: 'calc(100vw - (100vw - 1180px) / 2)',
+  maxWidth: 'calc(100vw - ((100vw - 1180px) / 2))',
   marginLeft: 'auto',
   minHeight: '656px'
 })

@@ -15,7 +15,7 @@ export const Container = styled('div', {
 export const Header = styled('header', {
   padding: '2rem 0',
   /* The reason for this styling is
-  The width 110% makes the element expand to fill 100% of its parent container, ensuring it can adapt to smaller screens
+  The width 100% makes the element expand to fill 100% of its parent container, ensuring it can adapt to smaller screens
   or containers, if we don't put the width as 100%, it will only take the content length, if we put it to width: 1180,
   it will work as it was working, but 
 
