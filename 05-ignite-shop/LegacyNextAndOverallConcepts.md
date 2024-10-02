@@ -394,7 +394,24 @@ that depends on the user ID or any other details about the logged-in user, it ca
 ## Links Prefetch
 
 Another next feature which is interesting, but at the same time it can be dangerous, is the link prefetching which next
-does automatically, if we, for a example, access the homepage, 
+does automatically, if we, for a example, access the homepage, besides loading home, the app will also make a call for
+each product item that is appearing on the screen, and if we hover over it, next will make another prefetch call, he already
+has the response of the products.
+
+Next has an "Intersection Observer", which is basically an API from the browser that allows us to observe when elements are
+shown on the screen, and there is a probability of the user clicking on the link, next prefetches the page, for when the
+user clicks, it has already been loaded, even if it's not a page with was set on the getStaticPaths.
+
+This is good but it also can be problematic, but if we have many links on the screen, next will try to load each one of
+them, even if the user don't click on a prefetched link.
+
+So the solution for us to control it, is on the link, to utilize a property named prefetch, which by default is true, but
+if we pass the value of the false, next will ignore it until it's clicked.
+
+Now if we run build, go to the home page, no link is being loaded until is hovered over.
+
+## 
+
 
 
 
