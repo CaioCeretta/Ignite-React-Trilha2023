@@ -1,8 +1,10 @@
 import { stripe } from '@/lib/stripe'
 import { ImageContainer, ProductContainer, ProductDetails } from "@/styles/pages/product"
+import axios from 'axios'
 import { GetStaticPaths, GetStaticProps } from "next"
 import Image from "next/image"
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import Stripe from "stripe"
 
 interface ProductProps {
@@ -18,10 +20,36 @@ interface ProductProps {
 
 
 export default function Product({ product }: ProductProps) {
+  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState<boolean>(false)
 
-  function handleBuyProduct() {
-    console.log(product.defaultPriceId)
-  }
+  async function handleBuyProduct() {
+    /*First of all we will start with a try catch because it's recommended for dealing with external
+    requests, mainly for actions that comes from an user, try catch is very useful for returning to the
+    user if there was an error, or it succeedded*/
+    try {
+      setIsCreatingCheckoutSession(true)
+
+      const response = await axios.post('/api/checkout', {
+        priceId: product.defaultPriceId
+      })
+
+      const { checkoutUrl } = response.data;
+
+      /* We use the window, just as we would on js, because we are dealing with an external redirection
+      
+        For internal pages we use the push from next useRouter
+      */
+      window.location.href = checkoutUrl
+
+    } catch (err) {
+      setIsCreatingCheckoutSession(false)
+
+
+      alert('Failed redirecting to the checkout')
+    }
+
+  } 
+
 
   /*
     The request for obtaining product data can be made by getting the id from the url param and using `useEffect` to popu-
@@ -63,7 +91,7 @@ export default function Product({ product }: ProductProps) {
 
         <p>{product.description}</p>
 
-        <button onClick={handleBuyProduct}>
+        <button disabled={isCreatingCheckoutSession} onClick={handleBuyProduct}>
           Buy Now!
         </button>
       </ProductDetails>
