@@ -12,11 +12,16 @@ interface ProductProps {
     imageUrl: string;
     price: string;
     description: string;
+    defaultPriceId: string;
   }
 }
 
 
 export default function Product({ product }: ProductProps) {
+
+  function handleBuyProduct() {
+    console.log(product.defaultPriceId)
+  }
 
   /*
     The request for obtaining product data can be made by getting the id from the url param and using `useEffect` to popu-
@@ -58,7 +63,7 @@ export default function Product({ product }: ProductProps) {
 
         <p>{product.description}</p>
 
-        <button>
+        <button onClick={handleBuyProduct}>
           Buy Now!
         </button>
       </ProductDetails>
@@ -115,7 +120,8 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({ para
           style: 'currency',
           currency: 'USD'
         }).format(price.unit_amount! / 100),
-        description: product.description
+        description: product.description,
+        defaultPriceId: price.id
       }
     },
     revalidate: 60 * 60 * 1, // 1 hour

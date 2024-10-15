@@ -173,9 +173,10 @@ So any code that run inside of it, won't be visible to the client user, so one u
 an api call that needs to be hidden from the client, and one of the cases we are going to run, is one of them.
 Because we are going to load the products from stripe, and in stripe we have two types of api keys, the public one and the
 secret one, the public, even though it is public and don't hold sensitive data, is a key that don't allow us to fetch data
-from stripe. She's a key only used for checkout, and those cases, while the secret key allows us to list products, access
+from stripe. She's a key only used for checkout, and very specific cases, while the secret key allows us to list products, access
 to all stripe functionalities.
-This means that if we need to use the secret key, it's better for us to run the code on the server side.
+This means that if we need to pass sensitive data, getServerSideProps is the better place for us to place our codes, because
+it won't be visible to the user, so in it, we can pass sensitive data, such as authentication code, db code, etc.
 
 when using getServerSidePops  another good thing to do is to type the function, such as
 
