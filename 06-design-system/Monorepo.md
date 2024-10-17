@@ -88,8 +88,12 @@ Now, inside our react project, we are going to be able to import everything rela
 So if we now type import {} from '@ignite-ui/tokens', and press ctrl + space inside the {}, we will see everything exported
 from the index located on the tokens folder.
 
-If we try to build now, we are going to have a typescript problem, so to fix this issue, inside the packages folder we are
-going to create a ts-config folder, just as the other folders, init a package.json, this package is also going to be a private
+If we try to build now, we are going to have a typescript problem
+
+## Add Typescript
+
+to fix this issue, inside the packages folder we are going to create a ts-config folder, just as the other folders, init
+a package.json, this package is also going to be a private
 one because it's only going to be used internally. then, inside the ts-config folder, we'll add a base.json with some
 base configurations and also a react.json, with more specific ones. It will extend the base configurations and some others
 for typescript to understand react code.
@@ -105,7 +109,21 @@ this content, for example, and extending for each ones we need
 }
 
 Now the build is going to execute successfully, and the build in the react project, because we imported the colors in a file
-we will see that it'll also be available
+we will see that it'll also be available. Now for the linting
+
+## Eslint Code
+
+For eslint be reused, we are also going to create a package folder for the eslint, inside of it, add a package.json, change
+its name.
+
+The eslint will be very similar to the typescript, is also going to be private, but in here we are also going to pass an
+attribute named main with the main file that is going to be executed
+
+inside this file we are going to install the eslint library and the @rocketseat/eslint-plugin
+
+now on our index.js we are simply writing the basic setup extending the @rocketseat plugin, and now adding this new package
+as our devDependency to our other projects, and on our react and token projects we create a .eslinrrc.json file that will
+extend the package we've just installed
 
 ## Breakdown
 
