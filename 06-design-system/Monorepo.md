@@ -88,6 +88,25 @@ Now, inside our react project, we are going to be able to import everything rela
 So if we now type import {} from '@ignite-ui/tokens', and press ctrl + space inside the {}, we will see everything exported
 from the index located on the tokens folder.
 
+If we try to build now, we are going to have a typescript problem, so to fix this issue, inside the packages folder we are
+going to create a ts-config folder, just as the other folders, init a package.json, this package is also going to be a private
+one because it's only going to be used internally. then, inside the ts-config folder, we'll add a base.json with some
+base configurations and also a react.json, with more specific ones. It will extend the base configurations and some others
+for typescript to understand react code.
+
+Now we can reference this tsconfigs inside the other packages, such as going to the token folder, package.json and on the
+devDependencies, adding another one with the name of the ts-config package name we just created, then go up to the root of
+the monorepo, run an npm install to update all the packages then, go into each smaller package, create a tsconfig.json with
+this content, for example, and extending for each ones we need
+
+{
+  "extends": "@ignite-ui/ts-config/base.json",
+  "include": ["src"],
+}
+
+Now the build is going to execute successfully, and the build in the react project, because we imported the colors in a file
+we will see that it'll also be available
+
 ## Breakdown
 
 So for a breakdown, our outer package.json specifies the monorepo configuration, it prevents accidental publication of the
