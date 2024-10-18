@@ -7,5 +7,5 @@ const Button = styled('button', {
 })
 
 export function App() {
-  return <h1 style={{ color: colors.ignite300 }}>Ciao mondo</h1>
+  return <Button>Ciao mondo</Button>
 }
