@@ -125,44 +125,6 @@ now on our index.js we are simply writing the basic setup extending the @rockets
 as our devDependency to our other projects, and on our react and token projects we create a .eslinrrc.json file that will
 extend the package we've just installed.
 
-## Storybook
-
-First of all, we are going to create, inside the packages folder a doc folder and inside that folder we'll run:
-
-npx sb init --builder @storybook/builder-vite --type react
-
-Now, because we are using a monorepo and we already have a eslint package to extend from, we'll remove the package.json
-eslint property, delete all the eslints from the package.json, and import our @ignite-ui/eslint-config in our package.json
-and then create a .eslintrc.json just like the others.
-
-For creating our first story, we'll create a Button.stories.tsx where we are going to be able to use the button we exported
-from our index.ts in our react package, with:
-
-import { Button } from '@ignite-ui/react'
-
-Now, on every story file, we'll import two things from @storybook/react, which are StoryObj, Meta, that are two ts typings
-and the reason why we import meta, is because on the stories we export an object as default and cast it as Meta, so now
-we are going to know the object shape and know which parameters we can pass.
-
-Now for the Button, besides exporting the Button, we need to export a variation of this button. 
-
-The storybook needs the component to have at least one variation, in our case, we exporting another const named `Primary`
-and for that object, we can pass args, args are arguments we can pass properties inside of it. In the end the could will
-look something like, e.g.
-
-```ts
-export const Primary: StoryObj = {
-  args: {
-    children: 'Send',
-  },
-}
-```
-
-
-
-
-
-
 
 ## Breakdown
 
