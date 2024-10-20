@@ -177,6 +177,25 @@ and color would be '#ff00000'.
 A map method in js is called on arrays and takes a callback function as its parameter. This callback function is executed for
 each element in the array, so in this case, in the cb function, each element is passed to the cb in array like ['red', '#ff00000']
 
+## Tokens Grid
+
+In the tokens grid styling, we made the table to take the full width, set the border-collapse to collapse, this will make
+the columns separation to remove the spacing created by css for separating the columns.
+
+The td and tr will have similar stylings and the only difference is that on even rows, it will have a different background
+color from the rest, and on the first and lest children, it has a small rounded border, for the visual effect.
+
+
+### Space
+
+For the spaces, we did very similar to the colors, but one different thing we did was creating a table for these values,
+so on the table head, we used the name, value, and an additional column for when the object's values are in the "rems"
+other than "px".
+
+For the table body we used the object.entries on the spaces, and on the rem values cases, we did a calculation that, it
+would take the value, for exemplo, 0.25rem, remove the rem from the text and multiply it by 16 to show how many pixels it
+will take.
+
 
 
 

@@ -1,7 +1,7 @@
 .tokens-grid {
   width: 100%;
   font-family: sans-serif;
-  color: #FFF;
+  color: #fff;
   border-collapse: collapse;
 }
 
@@ -26,5 +26,5 @@
 }
 
 .tokens-grid tbody tr:nth-child(even) td {
-  background: #444;
+  background-color: #444;
 }
