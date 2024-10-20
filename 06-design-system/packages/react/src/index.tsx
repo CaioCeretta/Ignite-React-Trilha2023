@@ -34,6 +34,6 @@ export const Button = styled('button', {
   },
 
   defaultVariants: {
-    size: 'small',
+    size: 'big',
   },
 })

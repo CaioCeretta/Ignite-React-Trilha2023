@@ -109,7 +109,8 @@ Now, on every story file, we'll import two things from @storybook/react, which a
 and the reason why we import meta, is because on the stories we export an object as default and cast it as Meta, so now
 we are going to know the object shape and know which parameters we can pass.
 
-Now for the Button, besides exporting the Button, we need to export a variation of this button. 
+Now, for the button, exporting the default component does not define a story, because besides defining the global 
+configuration, we also need to export a variation for this button
 
 The storybook needs the component to have at least one variation, in our case, we exporting another const named `Primary`
 and for that object, we can pass args, args are arguments we can pass properties inside of it. In the end the could will
@@ -122,6 +123,62 @@ export const Primary: StoryObj = {
   },
 }
 ```
+
+
+  Stitches have an internal behavior which is called variance, so every place we use a style in it, be a button, or anything
+  else, we have something called variants, and it will be like the example on the Button component.
+
+  And for these variants to be used inside the story book, we pass it inside the object, the name of the variant and its name.
+
+  In this case, if we try to get the suggestion of the properties a button element can receive, ts won't know, but for us
+  to get the possible variants we need, for example, export a type ButtonProps, and say which variants it can receive.
+
+export type ButtonProps = {
+  size: 'small' | 'big'
+}
+
+for example, then, on the Meta and on the StoryObj, pass a generic with this type. But with stitches, we have a even easier
+way to defining this props not this hardcoded example. Stitches already know we have this variant and we can use a functionality
+from react, which is called ComponentProps, that basically inherits or extracts, what are the properties that a component
+can naturally receive, so if we export this type as ComponentProps<typeof Button>, it would also work.
+
+## Tokens
+
+Here on the tokens folder, we are going to document the tokens from our other package, we are first going to document the
+colors of our package. One good approach is for us to import the object and then, perform a map of the object.entries of
+that object.
+
+Break down of the object entries code
+
+ Object.entries(colors) takes an object (in this case, colors) and converts it into an array of key value pairs. Each pair
+ is itself an array, where the first element is the key and the second element is the value, so if colors is, for example
+
+ const colors = {
+  red: '#FF0000',
+  green: '#00FF00',
+  blue: '#0000FF'
+ }
+
+ then Object.entries(colors) will result in
+
+[
+  ['red', '#FF0000'],
+  ['green', '#00FF00'],
+  ['blue', '#0000FF']
+]
+
+Destructuring the entries, when we use map(([key, color]) => { ...} ) we are leveraging destructuring assignment, this allows
+us to unpack values from the arrays into variables directly.
+
+so in the context of the map, an try like ['red', '#ff0000'] is passed to the callback function. The destructing syntax
+([key, color]) extracts the first element into key and the second to color, so for the first iteration, key would be 'red'
+and color would be '#ff00000'.
+
+A map method in js is called on arrays and takes a callback function as its parameter. This callback function is executed for
+each element in the array, so in this case, in the cb function, each element is passed to the cb in array like ['red', '#ff00000']
+
+
+
 
 
 
