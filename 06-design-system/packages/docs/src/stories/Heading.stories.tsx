@@ -17,6 +17,13 @@ export const CustomTag: StoryObj<HeadingProps> = {
     children: 'h1 heading',
     as: 'h1',
     size: 'xl'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'By default, a heding will always be a `h2`, but we can change this by passing the property `as`'
+      }
+    }
   }
 }
 
