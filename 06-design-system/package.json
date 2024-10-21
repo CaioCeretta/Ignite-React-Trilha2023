@@ -7,10 +7,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build"
   },
-  "keywords": [],
+  "packageManager": "npm@10.7.0",
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "turbo": "^2.2.1"
+  }
 }

@@ -4,7 +4,6 @@ node_modules/
 # Build output
 dist/
 build/
-.turbo
 
 # Logs
 logs/
@@ -24,4 +23,3 @@ Thumbs.db
 # Python cache
 __pycache__/
 *.pyc
-

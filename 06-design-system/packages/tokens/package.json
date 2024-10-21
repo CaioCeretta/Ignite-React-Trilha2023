@@ -5,19 +5,17 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
     "lint": "eslint src/**/*.ts* --fix"
-
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "description": "",
   "devDependencies": {
-    "@ignite-ui/ts-config": "*",
     "@ignite-ui/eslint-config": "*",
+    "@ignite-ui/ts-config": "*",
     "tsup": "^8.3.0",
     "typescript": "^5.6.3"
   }
