@@ -6,7 +6,16 @@ export default {
   title: 'Typography/Heading',
   component: Heading,
   args: {
+    size: 'lg',
     children: 'Heading example'
+  },
+  argTypes: {
+    size: {
+      options: ["sm" , "md" , "lg" , "xl" , "2xl" , "4xl" , "5xl" , "6xl" , undefined],
+      control: {
+        type: 'inline-radio'
+      }
+    }
   }
 } as Meta<HeadingProps>
 

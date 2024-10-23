@@ -7,6 +7,13 @@ export default {
   args: {
     src: 'https://github.com/CaioCeretta.png',
     alt: 'My profile picture'
+  },
+  argTypes: {
+    src: {
+      control: {
+        type: 'text'
+      }
+    }
   }
 } as Meta<AvatarProps>
 
