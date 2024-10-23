@@ -1,0 +1,2 @@
+import{A as t}from"./index.cd4e5680.js";import"./index.a2571911.js";import"./iframe.63c1307d.js";import"./jsx-runtime.ca22ecb2.js";import"./index.723ea3b8.js";const e={title:"Data display/Avatar",component:t,args:{src:"https://github.com/CaioCeretta.png",alt:"My profile picture"},argTypes:{src:{control:{type:"text"}}}},p={},c={args:{src:"undefined"}},m=["Primary","WithFallback"];export{p as Primary,c as WithFallback,m as __namedExportsOrder,e as default};
+//# sourceMappingURL=Avatar.stories.43207a2e.js.map
