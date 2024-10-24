@@ -1,4 +1,4 @@
-name: Deploy Storybook
+name: Deploy docs
 
 on:
   push:
@@ -9,20 +9,25 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: npm install   
-  # Install dependencies for all packages in the monorepo
-
-      - name: Build dependencies (if necessary)
-        run: npm run build  # Replace with your build script
-
-      - name: Build Storybook
-        run: npm run build-storybook
-
-      - name: Deploy Storybook to GitHub Pages
-        uses: actions/deploy-pages@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          build_folder: ./storybook-static
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          TURBO_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          TURBO_TEAM: rocketseat
+
+      - name: Deploy storybook
+        working-directory: ./packages/docs
+        run: npm run deploy-storybook -- --ci --existing-output-dir=storybook-static
+        env:
+          GH_TOKEN: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
