@@ -21,15 +21,12 @@ jobs:
 
       - run: npm ci
 
-      - name: Build Token Project
-        run: npm run build --workspace=path/to/token-project
-
       - run: npm run build
         env:
           TURBO_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           TURBO_TEAM: rocketseat
 
-      - name: Deploy Storybook
+      - name: Deploy storybook
         working-directory: ./packages/docs
         run: touch storybook-static/.nojekyll && npm run deploy-storybook -- --ci --existing-output-dir=storybook-static
         env:
