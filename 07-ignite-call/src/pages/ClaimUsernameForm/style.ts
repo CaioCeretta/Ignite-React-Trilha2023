@@ -1,4 +1,4 @@
-import { Box, styled } from "@ignite-ui/react";
+import { Box, styled, Text } from "@ignite-ui/react";
 
 export const Form = styled(Box, {
   /* This is a form grid where we have an input and a button, so here we are telling css to make the input to be flexible
@@ -11,5 +11,13 @@ export const Form = styled(Box, {
 
   '@media(max-width: 600px)': {
     gridTemplateColumns: '1fr',
+  }
+})
+
+export const FormAnnotation = styled('div', {
+  marginTop: '$2',
+
+  [`> ${Text}`]: {
+    color: '$gray400'
   }
 })
