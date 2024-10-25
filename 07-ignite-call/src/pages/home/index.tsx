@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Container, Hero, Preview } from './styles'
 
 import previewImg from '../../assets/app-preview.png'
-import { ClaimUsernameForm } from '../ClaimUsernameForm'
+import { ClaimUsernameForm } from './components/ClaimUsernameForm'
 
 export default function Home() {
   return (
