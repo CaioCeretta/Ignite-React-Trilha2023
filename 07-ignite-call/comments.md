@@ -12,5 +12,11 @@ process.
 
 One of the benefits is that it integrates with almost all oUath Providers, such as github, google, facebook, and so on.
 
+## Google OAuth
+
+First off, we start by creating an application in the google cloud manager, once we've done that, we go inside the app
+and create the client id, where we'll choose a name, the application address on the js authorized origins, and on the
+callback we pass the app-address/api/auth/callback/provider-name, in this case, /callback/google
+
 
 
