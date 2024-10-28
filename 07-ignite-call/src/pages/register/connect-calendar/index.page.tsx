@@ -1,14 +1,28 @@
 import { Button, Heading, MultiStep, Text } from "@ignite-ui/react";
 import { Container, Header } from "../style";
-import { ArrowRight } from "phosphor-react";
-import { ConnectBox, ConnectItem } from "./style";
+import { ArrowRight, Check } from "phosphor-react";
+import { AuthError, ConnectBox, ConnectItem } from "./style";
 import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 
 
 export default function Register() {
 
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+
+  const router = useRouter();
+
+  const isSignedIn = status === 'authenticated'
+  
+  const hasAuthError = !!router.query.error;
+
+  /* One option is to avoid creating in line arrow functions and create separate functions, instead of writing
+  onClick={() => signIn()}, create a separate function such as handleSignin and just invoke it as onClick={signIn}*/
+  
+  async function handleConnectCalendar() {
+    await signIn()
+  }
 
   return (
     <Container>
@@ -26,17 +40,33 @@ export default function Register() {
       <ConnectBox>
         <ConnectItem>
           <Text>Google Calendar</Text>
-          <Button
-          onClick={() => signIn('google')}
-          variant={"secondary"}
-          size="sm">
-            Conectar
-            <ArrowRight />
-          </Button>
+         { 
+          isSignedIn ? (
+            <Button size="sm" disabled >
+              Conectado
+              <Check />
+            </Button>
+          ) : (
+            <Button
+            onClick={handleConnectCalendar}
+            variant={"secondary"}
+            size="sm">
+              Conectar
+              <ArrowRight />
+            </Button>
+          )
+         }
         </ConnectItem>
 
+        {hasAuthError && (
+          <AuthError size="sm">
+            Falha ao se conectar ao Google, verifique se você habilitou as
+            permissões de acesso ao Google Calendar.
+          </AuthError>
+        )}
 
-        <Button type="submit">
+
+        <Button disabled={!isSignedIn} type="submit">
           Próximo passo
           <ArrowRight />
         </Button>
