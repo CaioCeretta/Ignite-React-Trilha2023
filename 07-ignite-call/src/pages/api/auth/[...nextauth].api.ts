@@ -15,33 +15,55 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "../../../lib/auth/prisma-adapter";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(),
 
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-      authorization: {
-        params: {
-          scope:
-          'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar',        }
-      },
 
-    }),
-  ],
-  /*Callbacks are many functions that are going to be called in the authentication process, the most common cbs are signIn, redirect, session, jwt */ 
-  callbacks: {
-    async signIn({account }) {
-      if(!account?.scope?.includes('https://www.googleapis.com/auth/calendar')) {
-        console.log(account);
-        return '/register/connect-calendar/?error=permissions'
+export function buildNextAuthOptions(req: NextApiRequest, res: NextApiResponse): NextAuthOptions {
+  return {
+    adapter: PrismaAdapter(req, res),
+
+    providers: [
+      GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+        authorization: {
+          params: {
+            scope:
+              'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar',
+          }
+        },
+
+      }),
+    ],
+
+    /*Callbacks are many functions that are going to be called in the authentication process, the most common cbs are signIn, redirect, session, jwt*/
+    callbacks: {
+      async signIn({ account }) {
+        if (!account?.scope?.includes('https://www.googleapis.com/auth/calendar')) {
+          console.log(account);
+          return '/register/connect-calendar/?error=permissions'
+        }
+
+        return true;
       }
-
-      return true;
     }
   }
 };
 
-export default NextAuth(authOptions);
+/* Advanced Initialization */
+export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+  /* Now, here, we are going to need to pass the cookies all the way down to the prisma adapter. So first of all, instead
+  of the authOptions being an object, we'll transform it into a function, and inside the function, return the same object
+  we were passing as authOptions, then, on these arguments, pass that buildNextAuth function we've just created with the
+  req and res as arguments.
+
+  Now we'll make our prisma adapter to also receive this req and res on its creation.
+
+  Now the last step is to, on the adapter call, inside the adapter call, pass the req and res to it
+  
+  */
+
+  return await NextAuth(req, res, buildNextAuthOptions(req, res))
+}
+

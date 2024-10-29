@@ -39,3 +39,26 @@ deleteSession, and many others, because each of these methods next auth uses to 
 ### End of brief explanation
 
  
+ ## Next Auth Initialization
+
+ We can initialize the next auth in two ways
+
+ 1. Simple Initialization: In the api/auth/[...nextauth].ts, where will create the authOptions object, where we'll pass
+  all the informations we need, such as the provider, the adapter, the cb, and more, and then, on the end of the file, we
+  export this object as default, e.g.
+
+  export default NextAuth(authOptions);
+
+2. Advanced Initialization -  Instead of exporting the next auth as default, we edxport as default an object that will
+  have access to the request and response, e.g
+
+  import type { NextApiRequest, NextApiResponse } from 'next'
+  import NextAuth from 'next-auth'
+
+  export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+    //Do whatever we want here, before the request is passed down to `NextAuth`
+
+    return await NextAuth(req, res, {
+
+    })
+  }

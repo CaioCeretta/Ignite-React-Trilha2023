@@ -1,10 +1,51 @@
 import type { Adapter } from "next-auth/adapters"
 import { prisma } from "../prisma"
+import type { NextApiRequest, NextApiResponse } from "next"
+import { destroyCookie, parseCookies } from "nookies"
 
-export function PrismaAdapter(): Adapter {
+export function PrismaAdapter(req: NextApiRequest, res: NextApiResponse): Adapter {
   return {
-    async createUser(user) {
-      return
+    async createUser(user: any) {
+      /* For creating a user and appending the value that was already informed with the google info, we will, first get
+      the value saved on our cookies, and inside the id, fill the information that come from this object user, which are
+      the values passed in the signIn() from next-auth.
+      The problem is that prisma adapter does not have access to the browser cookies, the only place where we will have 
+      access to the them, on the server side, is through the req and res parameter
+      inside req we have the cookies and from res we can modify the cookies
+
+      Now after the modifications inside the nextauth file, we are able to access the cookies
+      */
+
+      const { '@ignitecall:userId': userIdOnCookies  } = parseCookies({req})
+
+      if(!userIdOnCookies) {
+        throw new Error('User ID not found on cookies')
+      }
+
+      const prismaUser = await prisma.user.update({
+        where: {
+          id: userIdOnCookies
+        },
+        data: {
+          fullname: user.fullname,
+          email: user.email,
+          avatar_url: user.avatar_url
+        }
+      })
+      
+      destroyCookie({ res }, '@ignitecall:userId', {
+        path: '/'
+      })
+
+      return {
+        id: prismaUser.id,
+        fullname: prismaUser.fullname,
+        username: prismaUser.username,
+        email: prismaUser.email!,
+        avatar_url: prismaUser.avatar_url!,
+        emailVerified: null,
+      }      
+
     },
     async getUser(id) {
       const user = await prisma.user.findUniqueOrThrow({
@@ -182,5 +223,13 @@ export function PrismaAdapter(): Adapter {
         expires: prismaSession.expires
       }
     },
+
+    async deleteSession(sessionToken) {
+      await prisma.session.delete({
+        where: {
+          session_token: sessionToken
+        }
+      })
+    }
   }
 }
