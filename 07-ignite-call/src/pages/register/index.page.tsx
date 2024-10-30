@@ -14,7 +14,7 @@ const registerFormSchema = z.object({
     .min(3, { message: 'O usuário precisa ter pelo menos 3 letras' })
     .regex(/^([a-z\\-]+)$/i, { message: 'O usuário pode ter apenas letras e hifens' })
     .transform(username => username.toLowerCase()),
-  fullname: z.string().min(3, { message: 'O nome precisa ter pelo menos três letras' })
+  name: z.string().min(3, { message: 'O nome precisa ter pelo menos três letras' })
 })
 
 type RegisterFormType = z.infer<typeof registerFormSchema>
@@ -42,7 +42,7 @@ export default function Register() {
   async function handleRegister(data: RegisterFormType) {
     try {
       await api.post('/users', {
-        fullname: data.fullname,
+        name: data.name,
         username: data.username
       })
 
@@ -84,10 +84,10 @@ export default function Register() {
         </label>
         <label>
           <Text size="sm">Nome Completo</Text>
-          <TextInput placeholder="Seu nome" {...register('fullname')} />
-          {errors.fullname &&
+          <TextInput placeholder="Seu nome" {...register('name')} />
+          {errors.name &&
             <FormError>
-              {errors.fullname.message}
+              {errors.name.message}
             </FormError>
           }
 
