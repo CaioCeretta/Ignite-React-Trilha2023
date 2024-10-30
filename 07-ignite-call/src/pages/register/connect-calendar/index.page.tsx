@@ -24,6 +24,8 @@ export default function Register() {
     await signIn()
   }
 
+  console.log(session)
+
   return (
     <Container>
       <Header>
