@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 
 
-export default function Register() {
+export default function ConnectCalendar() {
 
   const { data: session, status } = useSession()
 
