@@ -4,7 +4,7 @@ import { ArrowRight, Check } from "phosphor-react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer } from "./style";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { getWeekDays } from "../../../utils/get-week-days";
 
@@ -31,7 +31,7 @@ const TimeIntervalsFormSchema = z.object({
 */
 
 export default function TimeIntervals() {
-  const { register, handleSubmit, formState: { isSubmitting, errors }, control } = useForm(
+  const { register, handleSubmit, formState: { isSubmitting, errors }, control, watch } = useForm(
     {
       /* We want that, when the user enters the form, all the options are available and all the times are set for the
       start and the end of the day*/
@@ -67,6 +67,8 @@ export default function TimeIntervals() {
     control
   })
 
+  const intervals = watch('intervals')
+
   const weekDays = getWeekDays()
 
 
@@ -98,7 +100,39 @@ export default function TimeIntervals() {
           {fields.map((field, index) => (
             <IntervalItem key={field.id}>
               <IntervalDay>
-                <Checkbox />
+                {/* We only can use html register on native html elements, Checkbox is not one, so we cannot use useForm
+                register right here, we need to make this a controlled component, a controller is used when we have any
+                element on screen, that will insert something on the form, but it's not native from html */}
+                <Controller
+                  name={`intervals.${index}.enabled`}
+                  control={control}
+                  render={({ field }) => {
+                    /*
+                      Checkbox component explanation
+
+                      1 - We have he property onCheckedChange, this is a property that will be called whenever we click to
+                      change the value of the checkbox, and one property the function receives is the checked that we'll use
+                      if the controlled field changed, whether is checked or uncheded, we will change the property and
+                      talk with the hook form
+                      2 - The reason we didn't simply pass the checked, but checked === true, is because on radix-ui, it
+                      can be a boolean or a string 'indeterminate', indeterminate is important for typescript, because
+                      let's think we have a checkbox on the screen, it rendered on the screen but the user never handled
+                      its value, and we don't know if it's true or false. So there is a third state that radix calls 'indeterminate'
+                      that state is because we can't determine what will be the user choice, it's not true nor false.
+                      Then here we are doing a rule, if the checkbox checked is true, the user really clicked on it, then
+                      it will apply the value as true, otherwise it's false.
+                      3 - We'll also set the checked from the Checkbox as the field value so we can retrieve its value.
+                      This will be useful for us to retrieve the initial value we used as default
+
+                    */
+                    return <Checkbox
+                      onCheckedChange={checked => {
+                        field.onChange(checked === true)
+                      }}
+                      checked={field.value}
+                    />
+                  }}
+                />
                 <Text>{weekDays[field.weekDay]}</Text>
               </IntervalDay>
               <IntervalInputs>
@@ -107,14 +141,14 @@ export default function TimeIntervals() {
                   type="time"
                   step={60}
                   {...register(`intervals.${index}.startTime`)}
-
+                  disabled={intervals[index].enabled === false}
                 />
                 <TextInput
                   size={'sm'}
                   type="time"
                   step={60}
                   {...register(`intervals.${index}.endTime`)}
-
+                  disabled={intervals[index].enabled === false}
                 />
               </IntervalInputs>
             </IntervalItem>
