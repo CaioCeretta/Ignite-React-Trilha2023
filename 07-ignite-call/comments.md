@@ -62,3 +62,20 @@ deleteSession, and many others, because each of these methods next auth uses to 
 
     })
   }
+
+  ## Dealing with numbers on codes.
+
+  Is always a good practice for us to store in our database, only decimal values, this way, we won't have commas between
+  the numbers, so by multiplying them by 100, will always give us integer values
+
+  But with dates, we should always try to save them the full date, even if we are dealing with specific times, because
+  saving them as so, is way more easier to work with.
+
+  If we won't use the full date, and our application is a bit simpler, and we need to save only the schedule, we should
+  convert the time to minutes, by multiplying it by 60, minutes, if we won't deal with seconds on the stored time, is way
+  easier to work with than to work with a string like '08:00', a string like this, is more difficult to compare if the
+  time is before or after another, whereas if we are working with minutes, is way easier for us to compare something like
+  18h being after 8h.
+
+  So before we pass the value to the database, returned from the startTime and endTime, to our backend, we will convert
+  it to minutes. The rest of code / explanation will be on the time-intervals.tsx file

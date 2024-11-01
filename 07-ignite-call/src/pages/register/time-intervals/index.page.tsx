@@ -1,13 +1,12 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Checkbox, Heading, MultiStep, Text, TextInput } from "@ignite-ui/react";
-import { Container, Header } from "../style";
-import { ArrowRight, Check } from "phosphor-react";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer, FormError } from "./style";
+import { ArrowRight } from "phosphor-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { getWeekDays } from "../../../utils/get-week-days";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Container, Header } from "../style";
+import { FormError, IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer } from "./style";
+import { convertTimeStringToMinutes } from "../../../utils/convert-time-string-to-number";
 
 
 const TimeIntervalsFormSchema = z.object({
@@ -31,9 +30,31 @@ const TimeIntervalsFormSchema = z.object({
   .refine(intervals => intervals.length > 0, {
     message: 'Você precisa selecionar ao menos um dia na semana.'
   })
+  .transform(intervals => {
+    return intervals.map(interval => {
+      /*Here we are using the intervals returned by the refine, mapping over them, and returning an object. This object
+      different from the original one, does not have the enabled property, nor startTime neither endTime, then, on these
+      two new properties, we pass the value of the startTime and endTime, converted to minutes*/
+      return {
+        weekDay: interval.weekDay,
+        startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
+        endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
+      }
+    })
+  })
+  .refine(intervals => {
+    return intervals.every(interval => interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes)
+  }, {
+    message: 'O horário de término deve ser igual ou superior a uma hora de distância do início'
+  })
 })
 
-type TimeIntervalsFormData = z.infer<typeof TimeIntervalsFormSchema>
+/*By using the z.input and z.output, on the input we are passing the initial shape of the object, before the transformations
+and refinements, while on the output, we get the output of those*/
+
+type TimeIntervalsFormInput = z.input<typeof TimeIntervalsFormSchema>
+
+type TimeIntervalsFormOutput = z.output<typeof TimeIntervalsFormSchema>
 
 /*
   We have many week days inside our form, and each day of the week is a position in an array, so let's say we want each
@@ -53,7 +74,7 @@ type TimeIntervalsFormData = z.infer<typeof TimeIntervalsFormSchema>
 */
 
 export default function TimeIntervals() {
-  const { register, handleSubmit, formState: { isSubmitting, errors }, control, watch } = useForm(
+  const { register, handleSubmit, formState: { isSubmitting, errors }, control, watch } = useForm<TimeIntervalsFormInput>(
     {
       resolver: zodResolver(TimeIntervalsFormSchema),
       /* We want that, when the user enters the form, all the options are available and all the times are set for the
@@ -96,7 +117,9 @@ export default function TimeIntervals() {
 
 
 
-  async function handleSetTimeInterval(data: TimeIntervalsFormData) {
+  async function handleSetTimeInterval(data: any) {
+    const formData = data as TimeIntervalsFormOutput;
+      
     console.log(data)
   }
 
