@@ -3,15 +3,37 @@ import { Container, Header } from "../style";
 import { ArrowRight, Check } from "phosphor-react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer } from "./style";
+import { IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer, FormError } from "./style";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { getWeekDays } from "../../../utils/get-week-days";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
 const TimeIntervalsFormSchema = z.object({
+  /* 
+  The only content this form is going to receive is the values of the day, that are based on the intervals object which 
+  is an array of objects defined on the defaultValues, the length of this array will be seven, because we'll always
+  receive all days of the week, enabled or disabled, and at the end we'll transform the value, we will modify the shape of
+  the original array. One other thing we'll do is use another property from zod named refined, refined returns true or false,
+  in this case, if the array is valid or not, it will receive the array returned by transform, and inside of it, we return
+  a true or false, this will be useful if we want to disable the form in case no days are enabled. So it will be like this.
+  */
+  intervals: z.array(z.object({
+    weekDay: z.number().min(0).max(6),
+    enabled: z.boolean(),
+    startTime: z.string(),
+    endTime: z.string()
 
+  }),
+  ).length(7)
+  .transform(intervals => intervals.filter(interval => interval.enabled))
+  .refine(intervals => intervals.length > 0, {
+    message: 'Você precisa selecionar ao menos um dia na semana.'
+  })
 })
+
+type TimeIntervalsFormData = z.infer<typeof TimeIntervalsFormSchema>
 
 /*
   We have many week days inside our form, and each day of the week is a position in an array, so let's say we want each
@@ -33,6 +55,7 @@ const TimeIntervalsFormSchema = z.object({
 export default function TimeIntervals() {
   const { register, handleSubmit, formState: { isSubmitting, errors }, control, watch } = useForm(
     {
+      resolver: zodResolver(TimeIntervalsFormSchema),
       /* We want that, when the user enters the form, all the options are available and all the times are set for the
       start and the end of the day*/
       defaultValues: {
@@ -73,8 +96,8 @@ export default function TimeIntervals() {
 
 
 
-  async function handleSetTimeInterval() {
-
+  async function handleSetTimeInterval(data: TimeIntervalsFormData) {
+    console.log(data)
   }
 
   // const { data: session, status } = useSession()
@@ -155,8 +178,13 @@ export default function TimeIntervals() {
           ))}
         </IntervalsContainer>
 
+        {errors.intervals && (
+          <FormError size="sm">{errors.intervals.message}</FormError>
+        )}
+
         <Button
           type="submit"
+          disabled={isSubmitting}
         >
           Proximo Passo
           <ArrowRight />
