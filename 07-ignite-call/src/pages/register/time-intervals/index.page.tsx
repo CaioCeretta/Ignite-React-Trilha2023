@@ -4,12 +4,13 @@ import { ArrowRight, Check } from "phosphor-react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer } from "./style";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { getWeekDays } from "../../../utils/get-week-days";
 
 
 const TimeIntervalsFormSchema = z.object({
-  
+
 })
 
 /*
@@ -30,7 +31,45 @@ const TimeIntervalsFormSchema = z.object({
 */
 
 export default function TimeIntervals() {
-  const { register, handleSubmit, formState: {isSubmitting, errors} } = useForm()
+  const { register, handleSubmit, formState: { isSubmitting, errors }, control } = useForm(
+    {
+      /* We want that, when the user enters the form, all the options are available and all the times are set for the
+      start and the end of the day*/
+      defaultValues: {
+        intervals: [
+          { weekDay: 0, enabled: true, startTime: '08:00', endTime: '18:00' },
+          { weekDay: 1, enabled: true, startTime: '08:00', endTime: '18:00' },
+          { weekDay: 2, enabled: true, startTime: '08:00', endTime: '18:00' },
+          { weekDay: 3, enabled: true, startTime: '08:00', endTime: '18:00' },
+          { weekDay: 4, enabled: true, startTime: '08:00', endTime: '18:00' },
+          { weekDay: 5, enabled: true, startTime: '08:00', endTime: '18:00' },
+          { weekDay: 6, enabled: false, startTime: '08:00', endTime: '18:00' },
+        ]
+      }
+    }
+  )
+
+  /*
+
+  useFieldArray is a hook that allow us to iterate and manipulate a form field that is an array
+  
+  in our example we are working with week days, so it will be limited to only seven possible values to the field, but if
+  we on our daily job is building a form that is handled by the user, and he can add more items, useFieldArray is also
+  good in this cases   
+
+  when constructing the useFieldArray object, we pass the name of the field, which is intervals, the name where we used
+  for the array on the defaultValues, and control, which we get from useForm, this works for useForm to know which form
+  we are talking about. It will return us a fields property and we can simply iterate over each of the fields to show them
+  inside
+  */
+  const { fields } = useFieldArray({
+    name: 'intervals',
+    control
+  })
+
+  const weekDays = getWeekDays()
+
+
 
   async function handleSetTimeInterval() {
 
@@ -54,30 +93,36 @@ export default function TimeIntervals() {
         <MultiStep size={4} currentStep={3} />
       </Header>
 
-      <IntervalBox as="form" onSubmit={handleSubmit(handleSetTimeInterval)}> 
+      <IntervalBox as="form" onSubmit={handleSubmit(handleSetTimeInterval)}>
         <IntervalsContainer>
-          <IntervalItem>
-            <IntervalDay>
-              <Checkbox />
-              <Text>Segunda-feira</Text>
-            </IntervalDay>
-            <IntervalInputs>
-              <TextInput
-                size={'sm'}
-                type="time"
-                step={60}
-              />
-              <TextInput
-                size={'sm'}
-                type="time"
-                step={60}
-              />
-            </IntervalInputs>
-          </IntervalItem>
+          {fields.map((field, index) => (
+            <IntervalItem key={field.id}>
+              <IntervalDay>
+                <Checkbox />
+                <Text>{weekDays[field.weekDay]}</Text>
+              </IntervalDay>
+              <IntervalInputs>
+                <TextInput
+                  size={'sm'}
+                  type="time"
+                  step={60}
+                  {...register(`intervals.${index}.startTime`)}
+
+                />
+                <TextInput
+                  size={'sm'}
+                  type="time"
+                  step={60}
+                  {...register(`intervals.${index}.endTime`)}
+
+                />
+              </IntervalInputs>
+            </IntervalItem>
+          ))}
         </IntervalsContainer>
 
         <Button
-        type="submit"
+          type="submit"
         >
           Proximo Passo
           <ArrowRight />
