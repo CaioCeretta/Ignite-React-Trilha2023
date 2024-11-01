@@ -4,10 +4,37 @@ import { ArrowRight, Check } from "phosphor-react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer } from "./style";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 
+const TimeIntervalsFormSchema = z.object({
+  
+})
+
+/*
+  We have many week days inside our form, and each day of the week is a position in an array, so let's say we want each
+  day of the week to be inside of the array and when it's submitted we want it to be like
+
+  [
+    {day: 0, start: time, end: time },
+    {day: 1, start: time, end: time },
+    {day: 2, start: time, end: time },
+    {day: 3, start: time, end: time },
+    {day: 4, start: time, end: time },
+    {day: 5, start: time, end: time }
+    {day: 6, start: time, end: time }
+  ]
+
+  in rhf, we call this, fieldArray, that is a field inside our form, which is an array. So we'll do as follows
+*/
 
 export default function TimeIntervals() {
+  const { register, handleSubmit, formState: {isSubmitting, errors} } = useForm()
+
+  async function handleSetTimeInterval() {
+
+  }
 
   // const { data: session, status } = useSession()
 
@@ -27,7 +54,7 @@ export default function TimeIntervals() {
         <MultiStep size={4} currentStep={3} />
       </Header>
 
-      <IntervalBox as="form">
+      <IntervalBox as="form" onSubmit={handleSubmit(handleSetTimeInterval)}> 
         <IntervalsContainer>
           <IntervalItem>
             <IntervalDay>
