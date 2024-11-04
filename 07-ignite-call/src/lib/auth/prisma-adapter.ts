@@ -1,9 +1,12 @@
 import type { Adapter } from "next-auth/adapters"
 import { prisma } from "../prisma"
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse, NextPageContext } from "next"
 import { destroyCookie, parseCookies } from "nookies"
 
-export function PrismaAdapter(req: NextApiRequest, res: NextApiResponse): Adapter {
+export function PrismaAdapter(
+  req: NextApiRequest | NextPageContext['req'],
+  res: NextApiResponse | NextPageContext['res']
+): Adapter {
   return {
     async createUser(user: any) {
       /* For creating a user and appending the value that was already informed with the google info, we will, first get
