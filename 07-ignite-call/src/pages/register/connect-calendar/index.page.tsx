@@ -24,6 +24,10 @@ export default function ConnectCalendar() {
     await signIn()
   }
 
+  async function handleNavigateToNextStep() {
+    await router.push(`/register/time-intervals`)
+  }
+
   console.log(session)
 
   return (
@@ -68,7 +72,7 @@ export default function ConnectCalendar() {
         )}
 
 
-        <Button disabled={!isSignedIn} type="submit">
+        <Button onClick={handleNavigateToNextStep} disabled={!isSignedIn} type="submit">
           Próximo passo
           <ArrowRight />
         </Button>

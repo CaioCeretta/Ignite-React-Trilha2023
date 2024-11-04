@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Heading, MultiStep, Text, TextArea, TextInput } from "@ignite-ui/react";
+import { Avatar, Button, Heading, MultiStep, Text, TextArea, TextInput } from "@ignite-ui/react";
 import { ArrowRight } from "phosphor-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -9,6 +9,8 @@ import { useSession } from "next-auth/react";
 import type { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { buildNextAuthOptions } from "../../api/auth/[...nextauth].api";
+import { api } from "../../../lib/axios";
+import { useRouter } from "next/router";
 
 const updateProfileFormSchema = z.object({
   bio: z.string()
@@ -26,12 +28,18 @@ export default function UpdateProfile() {
     resolver: zodResolver(updateProfileFormSchema)
   });
 
-  const session = useSession()
+  const router = useRouter()
+
+  const {data: session} = useSession()
 
   console.log(session)
 
   async function handleUpdateProfile(data: UpdateProfileData) {
-   
+   await api.put('/users/profile', {
+    bio: data.bio
+   })
+
+   await router.push(`/schedule/${session?.user.username}`)
   }
 
   return (
@@ -44,12 +52,17 @@ export default function UpdateProfile() {
           Precisamos de algumas informações para criar seu perfil.
           Ah, você pode editar essas informações depois
         </Text>
-        <MultiStep size={4} currentStep={1} />
+        <MultiStep size={4} currentStep={3} />
       </Header>
-
+ 
       <ProfileBox as="form" onSubmit={handleSubmit(handleUpdateProfile)}>
         <label>
         <Text size="sm">Foto de perfil</Text>
+        {/* On the client side, we could have a cors problem, so loading the avatar from an external source, would result
+        in a problem of this type, but because we are loading the session from the server side, we don't have this type of
+        problem, because on the server side, cors wouldn't be applied, only in requests made by requests made from the
+        browser  */}
+        <Avatar src={session?.user.avatar_url} alt={session?.user.name}/>
         </label>
         <label>
           <Text size="sm">Sobre você</Text>

@@ -8,6 +8,7 @@ import { Container, Header } from "../style";
 import { FormError, IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer } from "./style";
 import { convertTimeStringToMinutes } from "../../../utils/convert-time-string-to-number";
 import { api } from "../../../lib/axios";
+import { useRouter } from "next/router";
 
 
 const TimeIntervalsFormSchema = z.object({
@@ -94,6 +95,8 @@ export default function TimeIntervals() {
     }
   )
 
+  const router = useRouter()
+
   /*
 
   useFieldArray is a hook that allow us to iterate and manipulate a form field that is an array
@@ -124,6 +127,8 @@ export default function TimeIntervals() {
     await api.post('/users/time-intervals', {
       intervals
     })
+
+    await router.push(`/register/update-profile`)
   }
 
   // const { data: session, status } = useSession()
