@@ -147,8 +147,6 @@ export function PrismaAdapter(req: NextApiRequest, res: NextApiResponse): Adapte
         email: prismaUser.email!,
         emailVerified: null,
         avatar_url: prismaUser.avatar_url!,
-
-
       }
     },
     async linkAccount(account: any) {

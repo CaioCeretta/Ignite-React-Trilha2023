@@ -7,6 +7,7 @@ import { getWeekDays } from "../../../utils/get-week-days";
 import { Container, Header } from "../style";
 import { FormError, IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer } from "./style";
 import { convertTimeStringToMinutes } from "../../../utils/convert-time-string-to-number";
+import { api } from "../../../lib/axios";
 
 
 const TimeIntervalsFormSchema = z.object({
@@ -118,9 +119,11 @@ export default function TimeIntervals() {
 
 
   async function handleSetTimeInterval(data: any) {
-    const formData = data as TimeIntervalsFormOutput;
+    const { intervals } = data as TimeIntervalsFormOutput;
       
-    console.log(data)
+    await api.post('/users/time-intervals', {
+      intervals
+    })
   }
 
   // const { data: session, status } = useSession()

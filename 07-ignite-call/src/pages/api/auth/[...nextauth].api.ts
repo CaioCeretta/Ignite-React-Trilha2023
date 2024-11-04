@@ -60,6 +60,10 @@ export function buildNextAuthOptions(req: NextApiRequest, res: NextApiResponse):
         return true;
       },
 
+      /* Here we are adding an information to the return of the next auth session, but internally, next auth doesn't  read
+      our code to know that we added a new information to the session, so inside the library, on its typings, the session
+      continues not having the user, at least, not with the amount of properties we use, so we'll need to change the
+      next.auth.d.ts file */
       async session({session, user}) {
         return {
           ...session,
