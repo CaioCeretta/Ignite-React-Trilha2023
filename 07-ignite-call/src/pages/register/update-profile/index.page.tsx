@@ -1,68 +1,73 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Avatar, Button, Heading, MultiStep, Text, TextArea, TextInput } from "@ignite-ui/react";
-import { ArrowRight } from "phosphor-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Container, FormError, Header } from "../style";
-import { FormAnnotation, ProfileBox } from "./styles";
-import { useSession } from "next-auth/react";
-import type { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth";
-import { buildNextAuthOptions } from "../../api/auth/[...nextauth].api";
-import { api } from "../../../lib/axios";
-import { useRouter } from "next/router";
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Avatar,
+  Button,
+  Heading,
+  MultiStep,
+  Text,
+  TextArea,
+  TextInput,
+} from '@ignite-ui/react'
+import { ArrowRight } from 'phosphor-react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Container, FormError, Header } from '../style'
+import { FormAnnotation, ProfileBox } from './styles'
+import { useSession } from 'next-auth/react'
+import type { GetServerSideProps } from 'next'
+import { getServerSession } from 'next-auth'
+import { buildNextAuthOptions } from '../../api/auth/[...nextauth].api'
+import { api } from '../../../lib/axios'
+import { useRouter } from 'next/router'
 
 const updateProfileFormSchema = z.object({
-  bio: z.string()
+  bio: z.string(),
 })
 
 type UpdateProfileData = z.infer<typeof updateProfileFormSchema>
 
 export default function UpdateProfile() {
- 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<UpdateProfileData>({
-    resolver: zodResolver(updateProfileFormSchema)
-  });
+    resolver: zodResolver(updateProfileFormSchema),
+  })
 
   const router = useRouter()
 
-  const {data: session} = useSession()
+  const { data: session } = useSession()
 
   console.log(session)
 
   async function handleUpdateProfile(data: UpdateProfileData) {
-   await api.put('/users/profile', {
-    bio: data.bio
-   })
+    await api.put('/users/profile', {
+      bio: data.bio,
+    })
 
-   await router.push(`/register/schedule/${session?.user.username}`)
+    await router.push(`/register/schedule/${session?.user.username}`)
   }
 
   return (
     <Container>
       <Header>
-        <Heading as="strong">
-          Bem vindo ao Ignite Call!
-        </Heading>
+        <Heading as="strong">Bem vindo ao Ignite Call!</Heading>
         <Text>
-          Precisamos de algumas informações para criar seu perfil.
-          Ah, você pode editar essas informações depois
+          Precisamos de algumas informações para criar seu perfil. Ah, você pode
+          editar essas informações depois
         </Text>
         <MultiStep size={4} currentStep={3} />
       </Header>
- 
+
       <ProfileBox as="form" onSubmit={handleSubmit(handleUpdateProfile)}>
         <label>
-        <Text size="sm">Foto de perfil</Text>
-        {/* On the client side, we could have a cors problem, so loading the avatar from an external source, would result
+          <Text size="sm">Foto de perfil</Text>
+          {/* On the client side, we could have a cors problem, so loading the avatar from an external source, would result
         in a problem of this type, but because we are loading the session from the server side, we don't have this type of
         problem, because on the server side, cors wouldn't be applied, only in requests made by requests made from the
         browser  */}
-        <Avatar src={session?.user.avatar_url} alt={session?.user.name}/>
+          <Avatar src={session?.user.avatar_url} alt={session?.user.name} />
         </label>
         <label>
           <Text size="sm">Sobre você</Text>
@@ -71,20 +76,14 @@ export default function UpdateProfile() {
             Fale um pouco sobre você. Isto será exibido em sua página pessoal.
           </FormAnnotation>
 
-          {errors.bio &&
-            <FormError>
-              {errors.bio.message}
-            </FormError>
-          }
-
+          {errors.bio && <FormError>{errors.bio.message}</FormError>}
         </label>
         <Button type="submit">
           Finalizar
           <ArrowRight />
         </Button>
-
       </ProfileBox>
-    </Container >
+    </Container>
   )
 }
 
@@ -128,7 +127,7 @@ export default function UpdateProfile() {
   sided, we can use the same function of loading the session inside of here.
 */
 
-export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   /* If we simply do like this, it will returns us an error, that's because the req and res of the buildNextAuthOptions
   function receives a NextApiRequest and a NextApiResponse, and these req and res are not of that type, so some infos are
   not equal in both objects, so we'll change the typing on that function construction so it will be ApiRequest or PageContext['req']
@@ -142,12 +141,12 @@ export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
   const session = await getServerSession(
     req,
     res,
-    buildNextAuthOptions(req, res)
+    buildNextAuthOptions(req, res),
   )
 
   return {
     props: {
-      session
+      session,
     },
   }
 }

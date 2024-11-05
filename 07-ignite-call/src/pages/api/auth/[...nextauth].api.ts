@@ -12,24 +12,22 @@
   doesn't matter how many parameters we pass, it will always redirect us to this file.
 */
 
-import NextAuth, { NextAuthOptions } from "next-auth";
-import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
-import { PrismaAdapter } from "../../../lib/auth/prisma-adapter";
-import type { NextApiRequest, NextApiResponse, NextPageContext } from "next";
-
-
+import NextAuth, { NextAuthOptions } from 'next-auth'
+import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
+import { PrismaAdapter } from '../../../lib/auth/prisma-adapter'
+import type { NextApiRequest, NextApiResponse, NextPageContext } from 'next'
 
 export function buildNextAuthOptions(
   req: NextApiRequest | NextPageContext['req'],
-  res: NextApiResponse | NextPageContext['res']
+  res: NextApiResponse | NextPageContext['res'],
 ): NextAuthOptions {
   return {
     adapter: PrismaAdapter(req, res),
 
     providers: [
       GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+        clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
         authorization: {
           params: {
             promp: 'consent',
@@ -37,7 +35,7 @@ export function buildNextAuthOptions(
             response_type: 'code',
             scope:
               'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar',
-          }
+          },
         },
         profile(profile: GoogleProfile) {
           return {
@@ -47,34 +45,35 @@ export function buildNextAuthOptions(
             email: profile.email,
             avatar_url: profile.picture,
           }
-
-        }
+        },
       }),
     ],
 
-    /*Callbacks are many functions that are going to be called in the authentication process, the most common cbs are signIn, redirect, session, jwt*/
+    /* Callbacks are many functions that are going to be called in the authentication process, the most common cbs are signIn, redirect, session, jwt */
     callbacks: {
       async signIn({ account }) {
-        if (!account?.scope?.includes('https://www.googleapis.com/auth/calendar')) {
+        if (
+          !account?.scope?.includes('https://www.googleapis.com/auth/calendar')
+        ) {
           return '/register/connect-calendar?error=permissions'
         }
 
-        return true;
+        return true
       },
 
       /* Here we are adding an information to the return of the next auth session, but internally, next auth doesn't  read
       our code to know that we added a new information to the session, so inside the library, on its typings, the session
       continues not having the user, at least, not with the amount of properties we use, so we'll need to change the
       next.auth.d.ts file */
-      async session({session, user}) {
+      async session({ session, user }) {
         return {
           ...session,
-          user
+          user,
         }
-      }
-    }
+      },
+    },
   }
-};
+}
 
 /* Advanced Initialization */
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
@@ -91,4 +90,3 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
   return NextAuth(req, res, buildNextAuthOptions(req, res))
 }
-

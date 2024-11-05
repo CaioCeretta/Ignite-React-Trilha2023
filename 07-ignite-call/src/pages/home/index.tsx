@@ -1,5 +1,5 @@
 import { Heading, Text } from '@ignite-ui/react'
-/*The next image is mainly used on structural images, images that are local images from our application,  it's important
+/* The next image is mainly used on structural images, images that are local images from our application,  it's important
 that we use this component because it automatically does an automatic optimization of the images, he can convert our
 image to many different sizes, and by doing this, it will load the exact size we need and in the format its best suitable
 for us.    */
@@ -14,7 +14,8 @@ export default function Home() {
     <Container>
       <Hero>
         <Heading size={'4xl'}>Agendamento descomplicado</Heading>
-        <Text size={'xl'}>Conecte seu calendário e permita que as pessoas marquem agendamentos
+        <Text size={'xl'}>
+          Conecte seu calendário e permita que as pessoas marquem agendamentos
           no seu tempo livre
         </Text>
 

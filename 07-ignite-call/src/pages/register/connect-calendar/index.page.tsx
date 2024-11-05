@@ -1,25 +1,22 @@
-import { Button, Heading, MultiStep, Text } from "@ignite-ui/react";
-import { Container, Header } from "../style";
-import { ArrowRight, Check } from "phosphor-react";
-import { AuthError, ConnectBox, ConnectItem } from "./style";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-
-
+import { Button, Heading, MultiStep, Text } from '@ignite-ui/react'
+import { Container, Header } from '../style'
+import { ArrowRight, Check } from 'phosphor-react'
+import { AuthError, ConnectBox, ConnectItem } from './style'
+import { signIn, useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 export default function ConnectCalendar() {
-
   const { data: session, status } = useSession()
 
-  const router = useRouter();
+  const router = useRouter()
 
   const isSignedIn = status === 'authenticated'
-  
-  const hasAuthError = !!router.query.error;
+
+  const hasAuthError = !!router.query.error
 
   /* One option is to avoid creating in line arrow functions and create separate functions, instead of writing
-  onClick={() => signIn()}, create a separate function such as handleSignin and just invoke it as onClick={signIn}*/
-  
+  onClick={() => signIn()}, create a separate function such as handleSignin and just invoke it as onClick={signIn} */
+
   async function handleConnectCalendar() {
     await signIn()
   }
@@ -33,12 +30,10 @@ export default function ConnectCalendar() {
   return (
     <Container>
       <Header>
-        <Heading as="strong">
-          Conecte sua agenda!
-        </Heading>
+        <Heading as="strong">Conecte sua agenda!</Heading>
         <Text>
-          Conecte o seu calendário para verificar automaticamente as horas ocupadas
-          e os novos eventos à medida em que são agendados.
+          Conecte o seu calendário para verificar automaticamente as horas
+          ocupadas e os novos eventos à medida em que são agendados.
         </Text>
         <MultiStep size={4} currentStep={2} />
       </Header>
@@ -46,22 +41,21 @@ export default function ConnectCalendar() {
       <ConnectBox>
         <ConnectItem>
           <Text>Google Calendar</Text>
-         { 
-          isSignedIn ? (
-            <Button size="sm" disabled >
+          {isSignedIn ? (
+            <Button size="sm" disabled>
               Conectado
               <Check />
             </Button>
           ) : (
             <Button
-            onClick={handleConnectCalendar}
-            variant={"secondary"}
-            size="sm">
+              onClick={handleConnectCalendar}
+              variant={'secondary'}
+              size="sm"
+            >
               Conectar
               <ArrowRight />
             </Button>
-          )
-         }
+          )}
         </ConnectItem>
 
         {hasAuthError && (
@@ -71,13 +65,15 @@ export default function ConnectCalendar() {
           </AuthError>
         )}
 
-
-        <Button onClick={handleNavigateToNextStep} disabled={!isSignedIn} type="submit">
+        <Button
+          onClick={handleNavigateToNextStep}
+          disabled={!isSignedIn}
+          type="submit"
+        >
           Próximo passo
           <ArrowRight />
         </Button>
       </ConnectBox>
-
     </Container>
   )
 }
