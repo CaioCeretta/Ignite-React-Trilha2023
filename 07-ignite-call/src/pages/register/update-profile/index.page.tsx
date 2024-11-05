@@ -39,7 +39,7 @@ export default function UpdateProfile() {
     bio: data.bio
    })
 
-   await router.push(`/schedule/${session?.user.username}`)
+   await router.push(`/register/schedule/${session?.user.username}`)
   }
 
   return (

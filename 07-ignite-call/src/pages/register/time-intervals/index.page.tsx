@@ -1,15 +1,28 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Checkbox, Heading, MultiStep, Text, TextInput } from "@ignite-ui/react";
-import { ArrowRight } from "phosphor-react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
-import { getWeekDays } from "../../../utils/get-week-days";
-import { Container, Header } from "../style";
-import { FormError, IntervalBox, IntervalDay, IntervalInputs, IntervalItem, IntervalsContainer } from "./style";
-import { convertTimeStringToMinutes } from "../../../utils/convert-time-string-to-number";
-import { api } from "../../../lib/axios";
-import { useRouter } from "next/router";
-
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Button,
+  Checkbox,
+  Heading,
+  MultiStep,
+  Text,
+  TextInput,
+} from '@ignite-ui/react'
+import { ArrowRight } from 'phosphor-react'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { getWeekDays } from '../../../utils/get-week-days'
+import { Container, Header } from '../style'
+import {
+  FormError,
+  IntervalBox,
+  IntervalDay,
+  IntervalInputs,
+  IntervalItem,
+  IntervalsContainer,
+} from './style'
+import { convertTimeStringToMinutes } from '../../../utils/convert-time-string-to-number'
+import { api } from '../../../lib/axios'
+import { useRouter } from 'next/router'
 
 const TimeIntervalsFormSchema = z.object({
   /* 
@@ -20,39 +33,48 @@ const TimeIntervalsFormSchema = z.object({
   in this case, if the array is valid or not, it will receive the array returned by transform, and inside of it, we return
   a true or false, this will be useful if we want to disable the form in case no days are enabled. So it will be like this.
   */
-  intervals: z.array(z.object({
-    weekDay: z.number().min(0).max(6),
-    enabled: z.boolean(),
-    startTime: z.string(),
-    endTime: z.string()
-
-  }),
-  ).length(7)
-  .transform(intervals => intervals.filter(interval => interval.enabled))
-  .refine(intervals => intervals.length > 0, {
-    message: 'Você precisa selecionar ao menos um dia na semana.'
-  })
-  .transform(intervals => {
-    return intervals.map(interval => {
-      /*Here we are using the intervals returned by the refine, mapping over them, and returning an object. This object
-      different from the original one, does not have the enabled property, nor startTime neither endTime, then, on these
-      two new properties, we pass the value of the startTime and endTime, converted to minutes*/
-      return {
-        weekDay: interval.weekDay,
-        startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
-        endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
-      }
+  intervals: z
+    .array(
+      z.object({
+        weekDay: z.number().min(0).max(6),
+        enabled: z.boolean(),
+        startTime: z.string(),
+        endTime: z.string(),
+      }),
+    )
+    .length(7)
+    .transform((intervals) => intervals.filter((interval) => interval.enabled))
+    .refine((intervals) => intervals.length > 0, {
+      message: 'Você precisa selecionar ao menos um dia na semana.',
     })
-  })
-  .refine(intervals => {
-    return intervals.every(interval => interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes)
-  }, {
-    message: 'O horário de término deve ser igual ou superior a uma hora de distância do início'
-  })
+    .transform((intervals) => {
+      return intervals.map((interval) => {
+        /* Here we are using the intervals returned by the refine, mapping over them, and returning an object. This object
+      different from the original one, does not have the enabled property, nor startTime neither endTime, then, on these
+      two new properties, we pass the value of the startTime and endTime, converted to minutes */
+        return {
+          weekDay: interval.weekDay,
+          startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
+          endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
+        }
+      })
+    })
+    .refine(
+      (intervals) => {
+        return intervals.every(
+          (interval) =>
+            interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes,
+        )
+      },
+      {
+        message:
+          'O horário de término deve ser igual ou superior a uma hora de distância do início',
+      },
+    ),
 })
 
-/*By using the z.input and z.output, on the input we are passing the initial shape of the object, before the transformations
-and refinements, while on the output, we get the output of those*/
+/* By using the z.input and z.output, on the input we are passing the initial shape of the object, before the transformations
+and refinements, while on the output, we get the output of those */
 
 type TimeIntervalsFormInput = z.input<typeof TimeIntervalsFormSchema>
 
@@ -76,24 +98,28 @@ type TimeIntervalsFormOutput = z.output<typeof TimeIntervalsFormSchema>
 */
 
 export default function TimeIntervals() {
-  const { register, handleSubmit, formState: { isSubmitting, errors }, control, watch } = useForm<TimeIntervalsFormInput>(
-    {
-      resolver: zodResolver(TimeIntervalsFormSchema),
-      /* We want that, when the user enters the form, all the options are available and all the times are set for the
-      start and the end of the day*/
-      defaultValues: {
-        intervals: [
-          { weekDay: 0, enabled: true, startTime: '08:00', endTime: '18:00' },
-          { weekDay: 1, enabled: true, startTime: '08:00', endTime: '18:00' },
-          { weekDay: 2, enabled: true, startTime: '08:00', endTime: '18:00' },
-          { weekDay: 3, enabled: true, startTime: '08:00', endTime: '18:00' },
-          { weekDay: 4, enabled: true, startTime: '08:00', endTime: '18:00' },
-          { weekDay: 5, enabled: true, startTime: '08:00', endTime: '18:00' },
-          { weekDay: 6, enabled: false, startTime: '08:00', endTime: '18:00' },
-        ]
-      }
-    }
-  )
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+    control,
+    watch,
+  } = useForm<TimeIntervalsFormInput>({
+    resolver: zodResolver(TimeIntervalsFormSchema),
+    /* We want that, when the user enters the form, all the options are available and all the times are set for the
+      start and the end of the day */
+    defaultValues: {
+      intervals: [
+        { weekDay: 0, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 1, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 2, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 3, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 4, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 5, enabled: true, startTime: '08:00', endTime: '18:00' },
+        { weekDay: 6, enabled: false, startTime: '08:00', endTime: '18:00' },
+      ],
+    },
+  })
 
   const router = useRouter()
 
@@ -112,20 +138,18 @@ export default function TimeIntervals() {
   */
   const { fields } = useFieldArray({
     name: 'intervals',
-    control
+    control,
   })
 
   const intervals = watch('intervals')
 
-  const weekDays = getWeekDays()
-
-
+  const weekDays = getWeekDays({ short: false })
 
   async function handleSetTimeInterval(data: any) {
-    const { intervals } = data as TimeIntervalsFormOutput;
-      
+    const { intervals } = data as TimeIntervalsFormOutput
+
     await api.post('/users/time-intervals', {
-      intervals
+      intervals,
     })
 
     await router.push(`/register/update-profile`)
@@ -139,12 +163,14 @@ export default function TimeIntervals() {
 
   // const hasAuthError = !!router.query.error;
 
-
   return (
     <Container>
       <Header>
         <Heading as="strong">Quase lá!</Heading>
-        <Text>Defina o intervalo de horários que você está disponível em cada dia da semana</Text>
+        <Text>
+          Defina o intervalo de horários que você está disponível em cada dia da
+          semana
+        </Text>
 
         <MultiStep size={4} currentStep={3} />
       </Header>
@@ -179,12 +205,14 @@ export default function TimeIntervals() {
                       This will be useful for us to retrieve the initial value we used as default
 
                     */
-                    return <Checkbox
-                      onCheckedChange={checked => {
-                        field.onChange(checked === true)
-                      }}
-                      checked={field.value}
-                    />
+                    return (
+                      <Checkbox
+                        onCheckedChange={(checked) => {
+                          field.onChange(checked === true)
+                        }}
+                        checked={field.value}
+                      />
+                    )
                   }}
                 />
                 <Text>{weekDays[field.weekDay]}</Text>
@@ -213,10 +241,7 @@ export default function TimeIntervals() {
           <FormError size="sm">{errors.intervals.message}</FormError>
         )}
 
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-        >
+        <Button type="submit" disabled={isSubmitting}>
           Proximo Passo
           <ArrowRight />
         </Button>

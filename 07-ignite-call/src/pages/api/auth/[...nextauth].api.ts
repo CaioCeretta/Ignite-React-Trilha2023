@@ -19,7 +19,6 @@ import type { NextApiRequest, NextApiResponse, NextPageContext } from "next";
 
 
 
-
 export function buildNextAuthOptions(
   req: NextApiRequest | NextPageContext['req'],
   res: NextApiResponse | NextPageContext['res']
