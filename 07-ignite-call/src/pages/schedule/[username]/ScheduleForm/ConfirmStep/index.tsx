@@ -21,17 +21,17 @@ export function ConfirmStep() {
       </FormHeader>
 
       <label>
-        <Text>Nome completo</Text>
+        <Text size="sm">Nome completo</Text>
         <TextInput placeholder="Seu nome"></TextInput>
       </label>
 
       <label>
-        <Text>Endereço de e-mail</Text>
-        <TextInput placeholder="johndoe@example.com"></TextInput>
+        <Text size="sm">Endereço de e-mail</Text>
+        <TextInput type="email" placeholder="johndoe@example.com"></TextInput>
       </label>
 
       <label>
-        <Text>Observações</Text>
+        <Text size="sm">Observações</Text>
         <TextArea />
       </label>
 
