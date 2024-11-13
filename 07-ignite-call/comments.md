@@ -79,3 +79,10 @@ deleteSession, and many others, because each of these methods next auth uses to 
 
   So before we pass the value to the database, returned from the startTime and endTime, to our backend, we will convert
   it to minutes. The rest of code / explanation will be on the time-intervals.tsx file
+
+  ## Calendar
+
+  The reason why we are not doing it like on the register, is because on the register we had many components and each
+  component was a step that updates the row in the form, but in this case the process is easier and faster, the person
+  will choose a day and a time, and becauseof that, this decision was made by the instructor.
+

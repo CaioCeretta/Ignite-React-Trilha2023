@@ -1,4 +1,5 @@
 import { CaretLeft, CaretRight } from 'phosphor-react'
+import { getWeekDays } from '../../utils/get-week-days'
 import {
   CalendarActions,
   CalendarBody,
@@ -7,7 +8,6 @@ import {
   CalendarHeader,
   CalendarTitle,
 } from './style'
-import { getWeekDays } from '../../utils/get-week-days'
 
 export default function Calendar() {
   const shortWeekDays = getWeekDays({ short: true })
@@ -47,6 +47,26 @@ export default function Calendar() {
             </td>
             <td>
               <CalendarDay>2</CalendarDay>
+            </td>
+            <td>
+              <CalendarDay>3</CalendarDay>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <CalendarDay>3</CalendarDay>
+            </td>
+            <td>
+              <CalendarDay>3</CalendarDay>
+            </td>
+            <td>
+              <CalendarDay>3</CalendarDay>
+            </td>
+            <td>
+              <CalendarDay>3</CalendarDay>
+            </td>
+            <td>
+              <CalendarDay>3</CalendarDay>
             </td>
             <td>
               <CalendarDay>3</CalendarDay>
