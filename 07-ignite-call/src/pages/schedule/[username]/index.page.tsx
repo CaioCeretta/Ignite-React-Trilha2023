@@ -1,7 +1,7 @@
 import { Avatar, Heading, Text } from '@ignite-ui/react'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import { prisma } from '../../../lib/prisma'
-import { ConfirmStep } from './ScheduleForm/ConfirmStep'
+import { ScheduleForm } from './ScheduleForm/index.page'
 import { Container, UserHeader } from './style'
 
 interface ScheduleProps {
@@ -23,7 +23,7 @@ export default function Schedule({
         <Text>{bio}</Text>
       </UserHeader>
 
-      <ConfirmStep />
+      <ScheduleForm />
     </Container>
   )
 }
