@@ -4,6 +4,7 @@ export const CalendarContainer = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   gap: '$6',
+  padding: '$6',
 })
 
 export const CalendarHeader = styled('div', {

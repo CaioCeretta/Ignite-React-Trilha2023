@@ -13,6 +13,16 @@ import {
   CalendarTitle,
 } from './style'
 
+interface CalendarWeek {
+  week: number
+  days: Array<{
+    date: dayjs.Dayjs
+    disabled: boolean
+  }>
+}
+
+type CalendarWeeks = CalendarWeek[]
+
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(() => {
     /* Here we are simply creating a new dayjs, which is an object of Date, but setting the day as day one */
@@ -44,24 +54,92 @@ export default function Calendar() {
     }).map((_, index) => {
       return currentDate.set('date', index + 1)
     })
-  
+
     const firstWeekDay = currentDate.get('day')
-  
+
     const previousMonthFillArray = Array.from({
       length: firstWeekDay,
+    })
+      .map((_, i) => {
+        return currentDate.subtract(i + 1, 'day')
+      })
+      .reverse()
+
+    const lastDayInCurrentMonth = currentDate.set(
+      'date',
+      currentDate.daysInMonth(),
+    )
+    const lastWeekDay = lastDayInCurrentMonth.get('day')
+
+    const nextMonthFillArray = Array.from({
+      length: 7 - (lastWeekDay + 1),
     }).map((_, i) => {
-      return currentDate.subtract(i + 1, 'day')
-    }).reverse()
+      console.log(lastDayInCurrentMonth.add(i + 1, 'day'))
+      return lastDayInCurrentMonth.add(i + 1, 'day')
+    })
+
+    const calendarDays = [
+      ...previousMonthFillArray.map((date) => {
+        return { date, disabled: true }
+      }),
+      ...daysInMonthArray.map((date) => {
+        return { date, disabled: false }
+      }),
+      ...nextMonthFillArray.map((date) => {
+        return { date, disabled: true }
+      }),
+    ]
+
+    /* BY doing it like this, with the generic being the type we created, the reduce weeks will know that the return is
+    an array of that type
+
+    Reduce Explanation:
+
+      The first reduce argument is the final array we are going to create, usually named accumulator or acc
+      The second argument in this case is each one of these dates, we are going to simply set as _
+      The third argument is the index of the iteration
+      The fourth argument is the original array without modifications
+      
+      if we hover over weeks we will see that will be of type CalendarWeeks, each iteration of the reduce will modify this
+      array and in the end reduce it to a single variable that is our calendarWeeks, so the only information that will be
+      modified on each iteration, is the weeks
+
+      The second argument that is the underline, because we won't use it, is each of the days we have in calendarDays, but
+      an underline was used in the place of the argument, because no information we have inside that object is important
+      for us, because we want to separate the itens and days we have in our calendarDays, so the index is more important
+      than the content of the day, we will group by 7 will finish a week and we can continue.
+
+      The original is the original array, we could simply use the calendarDays, but one interesting thing about this parameter
+      is that we can handle this variable, in the way we want and it will never change the value of the outer variable, so
+      we can separate to another function that do not have the context of the calendarArrays. 
     
-    return previousMonthFillArray
+    
+    */
+    const calendarWeeks = calendarDays.reduce<CalendarWeeks>(
+      (weeks, _, i, original) => {
+        /* To find if the week has ended, we will check if our index is not divisible by seven, it means that we still haven't
+      got to the moment that we "break" the week */
+        const isNewWeek = i % 7 === 0
+
+        if (isNewWeek) {
+          weeks.push({
+            /* Because the module returns us 0, this will give us the number of the week of the week */
+            week: i / 7 + 1,
+            days: original.slice(i, i + 7),
+          })
+        }
+
+        return weeks
+      },
+      [],
+    )
+
+    return calendarWeeks
   }, [currentDate])
 
   /* Explanation of this code on:
 
   https://chatgpt.com/share/67355507-3804-8008-8e72-481b74467811 */
-
-  console.log(calendarWeeks)
-
 
   return (
     <CalendarContainer>
@@ -89,41 +167,21 @@ export default function Calendar() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-              <CalendarDay>1</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>2</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>3</CalendarDay>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <CalendarDay>3</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>3</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>3</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>3</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>3</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>3</CalendarDay>
-            </td>
-          </tr>
+          {calendarWeeks.map(({ week, days }) => {
+            return (
+              <tr key={week}>
+                {days.map(({ date, disabled }) => {
+                  return (
+                    <td key={date.toString()}>
+                      <CalendarDay disabled={disabled}>
+                        {date.get('date')}
+                      </CalendarDay>
+                    </td>
+                  )
+                })}
+              </tr>
+            )
+          })}
         </tbody>
       </CalendarBody>
     </CalendarContainer>
