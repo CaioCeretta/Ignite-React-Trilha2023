@@ -64,10 +64,14 @@ export default async function handler(
 
   const { time_start_in_minutes, time_end_in_minutes } = userAvailability
 
+  /* This time divided by 60 only works because we are working with hours, if we had a "broken" time, such as 9:15, this
+  wouldn't work */
   const startHour = time_start_in_minutes / 60
   const endHour = time_end_in_minutes / 60
 
   /* Now we will create an array with all the available dates in this interval, such as [10, 11, 12, 13...] */
+
+  console.log(userAvailability)
 
   const possibleTimes = Array.from({ length: endHour - startHour }).map(
     (_, i) => {
@@ -76,4 +80,5 @@ export default async function handler(
   )
 
   /* Now we need to start checking if any time on our db is already occupied */
+  return res.json({ possibleTimes })
 }
