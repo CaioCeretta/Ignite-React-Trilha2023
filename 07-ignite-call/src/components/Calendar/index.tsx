@@ -21,9 +21,17 @@ interface CalendarWeek {
   }>
 }
 
+interface CalendarProps {
+  selectedDate?: Date | null
+  onDateSelected: (date: Date) => void
+}
+
 type CalendarWeeks = CalendarWeek[]
 
-export default function Calendar() {
+export default function Calendar({
+  selectedDate,
+  onDateSelected,
+}: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(() => {
     /* Here we are simply creating a new dayjs, which is an object of Date, but setting the day as day one */
     return dayjs().set('date', 1)
@@ -74,7 +82,6 @@ export default function Calendar() {
     const nextMonthFillArray = Array.from({
       length: 7 - (lastWeekDay + 1),
     }).map((_, i) => {
-      console.log(lastDayInCurrentMonth.add(i + 1, 'day'))
       return lastDayInCurrentMonth.add(i + 1, 'day')
     })
 
@@ -83,7 +90,7 @@ export default function Calendar() {
         return { date, disabled: true }
       }),
       ...daysInMonthArray.map((date) => {
-        return { date, disabled: false }
+        return { date, disabled: date.endOf('day').isBefore(new Date()) }
       }),
       ...nextMonthFillArray.map((date) => {
         return { date, disabled: true }
@@ -173,7 +180,16 @@ export default function Calendar() {
                 {days.map(({ date, disabled }) => {
                   return (
                     <td key={date.toString()}>
-                      <CalendarDay disabled={disabled}>
+                      <CalendarDay
+                        /*
+                          Here we are using the native date from javascript, here we are not using the dayjs library,
+                          even though the date is from type of dayjs day, we don't need to strictly use it on the whole
+                          code. So when an external component communicates with this component, is interesting that it is
+                          able to communicate with native dates from js
+                        */
+                        onClick={() => onDateSelected(date.toDate())}
+                        disabled={disabled}
+                      >
                         {date.get('date')}
                       </CalendarDay>
                     </td>
