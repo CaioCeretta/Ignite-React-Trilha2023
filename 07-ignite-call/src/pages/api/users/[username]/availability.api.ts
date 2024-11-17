@@ -42,7 +42,7 @@ export default async function handler(
   const isPastDate = referenceDate.endOf('day').isBefore(new Date())
 
   if (isPastDate) {
-    return res.json({ availability: [] })
+    return res.json({ possibleTimes: [], availableTimes: [] })
   }
 
   /*  Now we need to make a "cross" of data, between the time intervals the user chose and have availability, with the
@@ -59,7 +59,7 @@ export default async function handler(
   })
 
   if (!userAvailability) {
-    return res.json({ availability: [] })
+    return res.json({ possibleTimes: [], availableTimes: [] })
   }
 
   const { time_start_in_minutes, time_end_in_minutes } = userAvailability
@@ -71,14 +71,58 @@ export default async function handler(
 
   /* Now we will create an array with all the available dates in this interval, such as [10, 11, 12, 13...] */
 
-  console.log(userAvailability)
-
   const possibleTimes = Array.from({ length: endHour - startHour }).map(
     (_, i) => {
       return startHour + i
     },
   )
 
+  /* Just as a reminder, the set method in day,js returns a new Day.js objectr with the specified part of the date modi
+  fied. It does not mutate the original object because Day.js is immutable
+  
+  So if we are doing something like
+
+  const originalDate = dayjs('2024-11-15');
+  const updatedDate = originalDate.set('hour', 10);
+
+  console.log(originalDate.format()); // still the original date
+  console.log(updatedDate.format()); // updated with the hour set to 10
+
+  so to break down this code, when we do 
+
+  referenceDate.set('hour', startHour).toDate();
+
+  This creates a new Day.js object where the hour is set to startHour, and .toDate() converts that object to a native
+  JavaScript Date.
+  */
+
+  const blockedTimes = await prisma.scheduling.findMany({
+    select: {
+      date: true,
+    },
+    where: {
+      user_id: user.id,
+      date: {
+        gte: referenceDate.set('hour', startHour).toDate(),
+        lte: referenceDate.set('hour', endHour).toDate(),
+      },
+    },
+  })
+
+  /* And here we are iterating through the available times for the user and filtering, maintaning only the ones that do not
+  exist in blockedTimes.some where the dates are equal to the time 
+  
+  So what here is going is basically that let's say we have this array in possible times [8, 9, 10], here the available times
+  will pass through each one of these, and validating that there is no register on the scheduling table where these hours
+  match with the appointment time
+  */
+
+  const availableTimes = possibleTimes.filter((time) => {
+    return !blockedTimes.some(
+      (blockedTime) => blockedTime.date.getHours() === time,
+    )
+  })
+
   /* Now we need to start checking if any time on our db is already occupied */
-  return res.json({ possibleTimes })
+  return res.json({ possibleTimes, availableTimes })
 }
