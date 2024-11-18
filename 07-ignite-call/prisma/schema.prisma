@@ -36,6 +36,7 @@ model Account {
   provider_type        String
   provider_id          String
   provider_account_id  String
+  // the @db.Text are columns that are going to hold large strings with more than 190 chars
   refresh_token        String?  @db.Text
   access_token         String?  @db.Text
   access_token_expires Int?
