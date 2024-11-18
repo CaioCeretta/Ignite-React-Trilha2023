@@ -7,9 +7,13 @@ import {
   Text,
   TextInput,
 } from '@ignite-ui/react'
+import { NextSeo } from 'next-seo'
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { api } from '../../../lib/axios'
+import { convertTimeStringToMinutes } from '../../../utils/convert-time-string-to-number'
 import { getWeekDays } from '../../../utils/get-week-days'
 import { Container, Header } from '../style'
 import {
@@ -20,9 +24,6 @@ import {
   IntervalItem,
   IntervalsContainer,
 } from './style'
-import { convertTimeStringToMinutes } from '../../../utils/convert-time-string-to-number'
-import { api } from '../../../lib/axios'
-import { useRouter } from 'next/router'
 
 const TimeIntervalsFormSchema = z.object({
   /* 
@@ -164,30 +165,33 @@ export default function TimeIntervals() {
   // const hasAuthError = !!router.query.error;
 
   return (
-    <Container>
-      <Header>
-        <Heading as="strong">Quase lá!</Heading>
-        <Text>
-          Defina o intervalo de horários que você está disponível em cada dia da
-          semana
-        </Text>
+    <>
+      <NextSeo title="Selecione sua disponibilidade | Ignite Call" noindex />
 
-        <MultiStep size={4} currentStep={3} />
-      </Header>
+      <Container>
+        <Header>
+          <Heading as="strong">Quase lá!</Heading>
+          <Text>
+            Defina o intervalo de horários que você está disponível em cada dia
+            da semana
+          </Text>
 
-      <IntervalBox as="form" onSubmit={handleSubmit(handleSetTimeInterval)}>
-        <IntervalsContainer>
-          {fields.map((field, index) => (
-            <IntervalItem key={field.id}>
-              <IntervalDay>
-                {/* We only can use html register on native html elements, Checkbox is not one, so we cannot use useForm
+          <MultiStep size={4} currentStep={3} />
+        </Header>
+
+        <IntervalBox as="form" onSubmit={handleSubmit(handleSetTimeInterval)}>
+          <IntervalsContainer>
+            {fields.map((field, index) => (
+              <IntervalItem key={field.id}>
+                <IntervalDay>
+                  {/* We only can use html register on native html elements, Checkbox is not one, so we cannot use useForm
                 register right here, we need to make this a controlled component, a controller is used when we have any
                 element on screen, that will insert something on the form, but it's not native from html */}
-                <Controller
-                  name={`intervals.${index}.enabled`}
-                  control={control}
-                  render={({ field }) => {
-                    /*
+                  <Controller
+                    name={`intervals.${index}.enabled`}
+                    control={control}
+                    render={({ field }) => {
+                      /*
                       Checkbox component explanation
 
                       1 - We have he property onCheckedChange, this is a property that will be called whenever we click to
@@ -205,47 +209,48 @@ export default function TimeIntervals() {
                       This will be useful for us to retrieve the initial value we used as default
 
                     */
-                    return (
-                      <Checkbox
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked === true)
-                        }}
-                        checked={field.value}
-                      />
-                    )
-                  }}
-                />
-                <Text>{weekDays[field.weekDay]}</Text>
-              </IntervalDay>
-              <IntervalInputs>
-                <TextInput
-                  size={'sm'}
-                  type="time"
-                  step={60}
-                  {...register(`intervals.${index}.startTime`)}
-                  disabled={intervals[index].enabled === false}
-                />
-                <TextInput
-                  size={'sm'}
-                  type="time"
-                  step={60}
-                  {...register(`intervals.${index}.endTime`)}
-                  disabled={intervals[index].enabled === false}
-                />
-              </IntervalInputs>
-            </IntervalItem>
-          ))}
-        </IntervalsContainer>
+                      return (
+                        <Checkbox
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked === true)
+                          }}
+                          checked={field.value}
+                        />
+                      )
+                    }}
+                  />
+                  <Text>{weekDays[field.weekDay]}</Text>
+                </IntervalDay>
+                <IntervalInputs>
+                  <TextInput
+                    size={'sm'}
+                    type="time"
+                    step={60}
+                    {...register(`intervals.${index}.startTime`)}
+                    disabled={intervals[index].enabled === false}
+                  />
+                  <TextInput
+                    size={'sm'}
+                    type="time"
+                    step={60}
+                    {...register(`intervals.${index}.endTime`)}
+                    disabled={intervals[index].enabled === false}
+                  />
+                </IntervalInputs>
+              </IntervalItem>
+            ))}
+          </IntervalsContainer>
 
-        {errors.intervals && (
-          <FormError size="sm">{errors.intervals.message}</FormError>
-        )}
+          {errors.intervals && (
+            <FormError size="sm">{errors.intervals.message}</FormError>
+          )}
 
-        <Button type="submit" disabled={isSubmitting}>
-          Proximo Passo
-          <ArrowRight />
-        </Button>
-      </IntervalBox>
-    </Container>
+          <Button type="submit" disabled={isSubmitting}>
+            Proximo Passo
+            <ArrowRight />
+          </Button>
+        </IntervalBox>
+      </Container>
+    </>
   )
 }

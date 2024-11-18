@@ -10,6 +10,7 @@ import {
 import type { GetServerSideProps } from 'next'
 import { getServerSession } from 'next-auth'
 import { useSession } from 'next-auth/react'
+import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
@@ -49,40 +50,44 @@ export default function UpdateProfile() {
   }
 
   return (
-    <Container>
-      <Header>
-        <Heading as="strong">Bem vindo ao Ignite Call!</Heading>
-        <Text>
-          Precisamos de algumas informações para criar seu perfil. Ah, você pode
-          editar essas informações depois
-        </Text>
-        <MultiStep size={4} currentStep={3} />
-      </Header>
+    <>
+      <NextSeo title="Atualize o seu perfil | Ignite Call" noindex />
 
-      <ProfileBox as="form" onSubmit={handleSubmit(handleUpdateProfile)}>
-        <label>
-          <Text size="sm">Foto de perfil</Text>
-          {/* On the client side, we could have a cors problem, so loading the avatar from an external source, would result
+      <Container>
+        <Header>
+          <Heading as="strong">Bem vindo ao Ignite Call!</Heading>
+          <Text>
+            Precisamos de algumas informações para criar seu perfil. Ah, você
+            pode editar essas informações depois
+          </Text>
+          <MultiStep size={4} currentStep={3} />
+        </Header>
+
+        <ProfileBox as="form" onSubmit={handleSubmit(handleUpdateProfile)}>
+          <label>
+            <Text size="sm">Foto de perfil</Text>
+            {/* On the client side, we could have a cors problem, so loading the avatar from an external source, would result
         in a problem of this type, but because we are loading the session from the server side, we don't have this type of
         problem, because on the server side, cors wouldn't be applied, only in requests made by requests made from the
         browser  */}
-          <Avatar src={session?.user.avatar_url} alt={session?.user.name} />
-        </label>
-        <label>
-          <Text size="sm">Sobre você</Text>
-          <TextArea {...register('bio')} />
-          <FormAnnotation size={'sm'}>
-            Fale um pouco sobre você. Isto será exibido em sua página pessoal.
-          </FormAnnotation>
+            <Avatar src={session?.user.avatar_url} alt={session?.user.name} />
+          </label>
+          <label>
+            <Text size="sm">Sobre você</Text>
+            <TextArea {...register('bio')} />
+            <FormAnnotation size={'sm'}>
+              Fale um pouco sobre você. Isto será exibido em sua página pessoal.
+            </FormAnnotation>
 
-          {errors.bio && <FormError>{errors.bio.message}</FormError>}
-        </label>
-        <Button type="submit">
-          Finalizar
-          <ArrowRight />
-        </Button>
-      </ProfileBox>
-    </Container>
+            {errors.bio && <FormError>{errors.bio.message}</FormError>}
+          </label>
+          <Button type="submit">
+            Finalizar
+            <ArrowRight />
+          </Button>
+        </ProfileBox>
+      </Container>
+    </>
   )
 }
 

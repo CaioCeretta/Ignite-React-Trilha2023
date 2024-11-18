@@ -6,32 +6,39 @@ for us.    */
 import Image from 'next/image'
 import { Container, Hero, Preview } from './styles'
 
+import { NextSeo } from 'next-seo'
 import previewImg from '../../assets/app-preview.png'
 import { ClaimUsernameForm } from './components/ClaimUsernameForm'
 
 export default function Home() {
   return (
-    <Container>
-      <Hero>
-        <Heading size={'4xl'}>Agendamento descomplicado</Heading>
-        <Text size={'xl'}>
-          Conecte seu calendário e permita que as pessoas marquem agendamentos
-          no seu tempo livre
-        </Text>
+    <>
+      <NextSeo
+        title="Descomplique a sua agenda | Ignite Call"
+        description="Conecte seu calendário e permita que as pessoas marquem agendamentos no seu tempo livre."
+      />
+      <Container>
+        <Hero>
+          <Heading size={'4xl'}>Agendamento descomplicado</Heading>
+          <Text size={'xl'}>
+            Conecte seu calendário e permita que as pessoas marquem agendamentos
+            no seu tempo livre
+          </Text>
 
-        <ClaimUsernameForm />
-      </Hero>
+          <ClaimUsernameForm />
+        </Hero>
 
-      <Preview>
-        {/* On the image tag, we specify in the width and the height, the biggest dimensions we may have for this image */}
-        <Image
-          src={previewImg}
-          height={400}
-          priority
-          quality={100}
-          alt="Image calendar example"
-        />
-      </Preview>
-    </Container>
+        <Preview>
+          {/* On the image tag, we specify in the width and the height, the biggest dimensions we may have for this image */}
+          <Image
+            src={previewImg}
+            height={400}
+            priority
+            quality={100}
+            alt="Image calendar example"
+          />
+        </Preview>
+      </Container>
+    </>
   )
 }

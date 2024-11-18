@@ -1,13 +1,14 @@
-import { Button, Heading, MultiStep, Text, TextInput } from '@ignite-ui/react'
-import { Container, Form, FormError, Header } from './style'
-import { ArrowRight } from 'phosphor-react'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import { api } from '../../lib/axios'
+import { Button, Heading, MultiStep, Text, TextInput } from '@ignite-ui/react'
 import { AxiosError } from 'axios'
+import { NextSeo } from 'next-seo'
+import { useRouter } from 'next/router'
+import { ArrowRight } from 'phosphor-react'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { api } from '../../lib/axios'
+import { Container, Form, FormError, Header } from './style'
 
 const registerFormSchema = z.object({
   username: z
@@ -64,36 +65,42 @@ export default function Register() {
   }
 
   return (
-    <Container>
-      <Header>
-        <Heading as="strong">Bem vindo ao Ignite Call!</Heading>
-        <Text>
-          Precisamos de algumas informações para criar seu perfil. Ah, você pode
-          editar essas informações depois
-        </Text>
-        <MultiStep size={4} currentStep={1} />
-      </Header>
+    <>
+      <NextSeo title="Crie uma conta | Ignite Call" />
 
-      <Form as="form" onSubmit={handleSubmit(handleRegister)}>
-        <label>
-          <Text size="sm">Nome de Usuário</Text>
-          <TextInput
-            prefix="ignite.com/"
-            placeholder="seu-usuario"
-            {...register('username')}
-          />
-          {errors.username && <FormError>{errors.username.message}</FormError>}
-        </label>
-        <label>
-          <Text size="sm">Nome Completo</Text>
-          <TextInput placeholder="Seu nome" {...register('name')} />
-          {errors.name && <FormError>{errors.name.message}</FormError>}
-        </label>
-        <Button type="submit">
-          Próximo passo
-          <ArrowRight />
-        </Button>
-      </Form>
-    </Container>
+      <Container>
+        <Header>
+          <Heading as="strong">Bem vindo ao Ignite Call!</Heading>
+          <Text>
+            Precisamos de algumas informações para criar seu perfil. Ah, você
+            pode editar essas informações depois
+          </Text>
+          <MultiStep size={4} currentStep={1} />
+        </Header>
+
+        <Form as="form" onSubmit={handleSubmit(handleRegister)}>
+          <label>
+            <Text size="sm">Nome de Usuário</Text>
+            <TextInput
+              prefix="ignite.com/"
+              placeholder="seu-usuario"
+              {...register('username')}
+            />
+            {errors.username && (
+              <FormError>{errors.username.message}</FormError>
+            )}
+          </label>
+          <label>
+            <Text size="sm">Nome Completo</Text>
+            <TextInput placeholder="Seu nome" {...register('name')} />
+            {errors.name && <FormError>{errors.name.message}</FormError>}
+          </label>
+          <Button type="submit">
+            Próximo passo
+            <ArrowRight />
+          </Button>
+        </Form>
+      </Container>
+    </>
   )
 }
