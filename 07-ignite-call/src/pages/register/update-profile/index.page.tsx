@@ -5,20 +5,19 @@ import {
   Heading,
   MultiStep,
   Text,
-  TextArea,
-  TextInput,
+  TextArea
 } from '@ignite-ui/react'
+import type { GetServerSideProps } from 'next'
+import { getServerSession } from 'next-auth'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { api } from '../../../lib/axios'
+import { buildNextAuthOptions } from '../../api/auth/[...nextauth].api'
 import { Container, FormError, Header } from '../style'
 import { FormAnnotation, ProfileBox } from './styles'
-import { useSession } from 'next-auth/react'
-import type { GetServerSideProps } from 'next'
-import { getServerSession } from 'next-auth'
-import { buildNextAuthOptions } from '../../api/auth/[...nextauth].api'
-import { api } from '../../../lib/axios'
-import { useRouter } from 'next/router'
 
 const updateProfileFormSchema = z.object({
   bio: z.string(),
@@ -46,7 +45,7 @@ export default function UpdateProfile() {
       bio: data.bio,
     })
 
-    await router.push(`/register/schedule/${session?.user.username}`)
+    await router.push(`/schedule/${session?.user.username}`)
   }
 
   return (
